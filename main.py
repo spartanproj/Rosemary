@@ -1,6 +1,6 @@
 from lex import *
 from parse import *
-print("Teeny Tiny Compiler")
+print("Rosemary Compiler")
 if len(sys.argv) != 2:
     sys.exit("Error: Compiler needs source file as argument.")
 with open(sys.argv[1], 'r') as inputFile:

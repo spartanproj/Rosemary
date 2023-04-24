@@ -1,3 +1,4 @@
+LET bar = 3
 LET foo = bar * 3 + 2
 IF foo > 0 
     IF 10 * 10 < 100
