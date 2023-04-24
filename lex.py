@@ -105,12 +105,13 @@ class Lexer:
                 token=Token(tokText,Type.IDENT)
             else:
                 token=Token(tokText,keyw)
+        
         self.next()
         return token
 class Token:
-    def __init__(self,text,type):
+    def __init__(self,text,kind):
         self.text=text
-        self.type=type
+        self.kind=kind
     @staticmethod
     def checkIfKeyword(tokenText):
         for type in Type:
@@ -130,9 +131,8 @@ class Type(enum.Enum):
         INPUT = 104
         LET = 105
         IF = 106
-        LBRACK = 107
-        RBRACK = 108
         WHILE = 109
+        END=110
         EQ = 201  
         PLUS = 202
         MINUS = 203
