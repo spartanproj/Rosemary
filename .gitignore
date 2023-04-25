@@ -1,1 +1,3 @@
 rsmy
+*.o
+/__pycache__/*

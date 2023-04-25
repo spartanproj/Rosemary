@@ -1,19 +1,19 @@
-float a = 0
-while a < 1 {
+float a=0
+while a<1 {
     print "Enter number of scores4: "
     input a
 }
 if a<=2 {
     print "a is 2"
 }
-float b = 0
-float s = 0
+float b=0
+float s=0
 print "Enter one value at a time: "
-while b < a {
+while b<a {
     input c
-    float s = s + c
-    float b = b + 1
+    float s=s+c
+    float b=b+1
 }
 
 print "Average: "
-print s / a
+print s/a
