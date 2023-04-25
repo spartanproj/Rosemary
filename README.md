@@ -23,3 +23,6 @@ while b<a {
 print "Average: "
 print s/a
 ```
+### Types: The list
+- float
+- ... more to come
