@@ -7,8 +7,9 @@ def log(*args):
         print(x)
     return 1
 class Parser:
-    def __init__(self,lexer):
+    def __init__(self,lexer,emitter):
         self.lexer = lexer
+        self.emitter=emitter
         self.symbols=set()
         self.labels=set()
         self.gotos=set()
@@ -31,10 +32,14 @@ class Parser:
         sys.exit("Error - "+msg)
     def program(self):
         log("PROGRAM")
+        self.emitter.headeremit("#include <stdio.h>")
+        self.emitter.headeremit("int main(void) {")
         while self.checkcur(Type.NEWLINE):
             self.next()
         while not self.checkcur(Type.EOF):
             self.statement()
+        self.emitter.emit("return 0;")
+        self.emitter.emit("}");
         for label in self.gotos:
             if label not in self.labels:
                 self.panic("Attempting to GOTO to undeclared label: " + label)
@@ -43,12 +48,16 @@ class Parser:
             log("PRINT")
             self.next()
             if self.checkcur(Type.STRING):
+                self.emitter.emit("printf(\""+self.curtok.text+"\\n\");")
                 self.next()
             else:
+                self.emitter.emitn("printf(\"%" + ".2f\\n\", (float)(")
                 self.expression()
+                self.emitter.emit("));")
         elif self.checkcur(Type.IF):
             log("IF")
             self.next()
+            self.emitter.emit("if(");
             self.comparison()
             self.nl()
             while not self.checkcur(Type.END):
