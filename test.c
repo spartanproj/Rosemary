@@ -6,11 +6,15 @@ float s;
 float c;
 a=0;
 while(a<1){
-printf("Enter number of scores3: \n");
+printf("Enter number of scores4: \n");
 if(0 == scanf("%f", &a)) {
 a = 0;
 scanf("%*s");
 }
+}
+if(
+a<=2){
+printf("a is 2\n");
 }
 b=0;
 s=0;

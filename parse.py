@@ -65,7 +65,6 @@ class Parser:
                 self.statement()
             self.match(Type.end)
             self.emitter.emit("}")
-            self.match(Type.end)
         elif self.checkcur(Type.WHILE):
             log("WHILE")
             self.next()
