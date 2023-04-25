@@ -6,7 +6,7 @@ float s;
 float c;
 a=0;
 while(a<1){
-printf("Enter number of scores: \n");
+printf("Enter number of scores3: \n");
 if(0 == scanf("%f", &a)) {
 a = 0;
 scanf("%*s");

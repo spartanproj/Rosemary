@@ -42,10 +42,10 @@ class Parser:
         self.emitter.emit("}");
         for label in self.gotos:
             if label not in self.labels:
-                self.panic("Attempting to GOTO to undeclared label: " + label)
+                self.panic("Attempting to goto to undeclared label: " + label)
     def statement(self):
-        if self.checkcur(Type.PRINT):
-            log("PRINT")
+        if self.checkcur(Type.print):
+            log("print")
             self.next()
             if self.checkcur(Type.STRING):
                 self.emitter.emit("printf(\""+self.curtok.text+"\\n\");")
@@ -57,45 +57,62 @@ class Parser:
         elif self.checkcur(Type.IF):
             log("IF")
             self.next()
-            self.emitter.emit("if(");
+            self.emitter.emit("if(")
             self.comparison()
             self.nl()
-            while not self.checkcur(Type.END):
+            self.emitter.emit("){")
+            while not self.checkcur(Type.end):
                 self.statement()
-            self.match(Type.END)
+            self.match(Type.end)
+            self.emitter.emit("}")
+            self.match(Type.end)
         elif self.checkcur(Type.WHILE):
             log("WHILE")
             self.next()
+            self.emitter.emitn("while(")
             self.comparison()
             self.nl()
-            while not self.checkcur(Type.END):
+            self.emitter.emit("){")
+            while not self.checkcur(Type.end):
                 self.statement()
-            self.match(Type.END)
-        elif self.checkcur(Type.LABEL):
-            log("LABEL")
+            self.match(Type.end)
+            self.emitter.emit("}")
+        elif self.checkcur(Type.label):
+            log("label")
             self.next()
             if self.curtok.text in self.labels:
                 self.panic("Label already exists: " + self.curToken.text)
             self.labels.add(self.curtok.text)
+            self.emitter.emit(self.curtok.text+":")
             self.match(Type.IDENT)
-        elif self.checkcur(Type.GOTO):
-            log("GOTO")
+        elif self.checkcur(Type.goto):
+            log("goto")
             self.next()
             self.gotos.add(self.curtok.text)
+            self.emitter.emit("goto "+self.curtok.text+";")
             self.match(Type.IDENT)
-        elif self.checkcur(Type.LET):
-            log("LET")
+        elif self.checkcur(Type.float):
+            log("float")
             self.next()
             if self.curtok.text not in self.symbols:
                 self.symbols.add(self.curtok.text)
+                self.emitter.headeremit("float " + self.curtok.text + ";")
+            self.emitter.emitn(self.curtok.text+"=")
             self.match(Type.IDENT)
             self.match(Type.EQ)
             self.expression()
-        elif self.checkcur(Type.INPUT):
-            log("INPUT")
+            self.emitter.emit(";")
+        elif self.checkcur(Type.input):
+            log("input")
             self.next()
             if self.curtok.text not in self.symbols:
                 self.symbols.add(self.curtok.text)
+                self.emitter.headeremit("float " + self.curtok.text + ";")
+            self.emitter.emit("if(0 == scanf(\"%" + "f\", &" + self.curtok.text + ")) {")
+            self.emitter.emit(self.curtok.text + " = 0;")
+            self.emitter.emitn("scanf(\"%")
+            self.emitter.emit("*s\");")
+            self.emitter.emit("}")
             self.match(Type.IDENT)
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
@@ -104,11 +121,13 @@ class Parser:
         log("COMPARISON")
         self.expression()
         if self.isCompOp():
+            self.emitter.emitn(self.curtok.text)
             self.next()
             self.expression()
         else:
             self.panic("Expected comparison operator at: " + self.curtok.text)
         while self.isCompOp():
+            self.emitter.emitn(self.curtok.text)
             self.next()
             self.expression()
     def isCompOp(self):
@@ -117,31 +136,35 @@ class Parser:
         log("EXPRESSION")
         self.term()
         while self.checkcur(Type.PLUS) or self.checkcur(Type.MINUS):
+            self.emitter.emitn(self.curtok.text)
             self.next()
             self.term()
     def term(self):
         log("TERM")
         self.unary()
         while self.checkcur(Type.ASTERISK) or self.checkcur(Type.FSLASH):
+            self.emitter.emitn(self.curtok.text)
             self.next()
             self.unary()
     def unary(self):
         log("UNARY")
         if self.checkcur(Type.PLUS) or self.checkcur(Type.MINUS):
+            self.emitter.emitn(self.curtok.text)
             self.next()        
         self.primary()
     def primary(self):
         log("PRIMARY (" + self.curtok.text + ")")
         if self.checkcur(Type.NUMBER):
+            self.emitter.emitn(self.curtok.text)
             self.next()
         elif self.checkcur(Type.IDENT):
             if self.curtok.text not in self.symbols:
                 self.panic("Referencing variable before assignment: " + self.curtok.text)
+            self.emitter.emitn(self.curtok.text)
             self.next()
         else:
             self.panic("Unexpected token at "+self.curtok.text)
     def nl(self):
-        log("NEWLINE")
         self.match(Type.NEWLINE)
         while self.checkcur(Type.NEWLINE):
             self.next()
