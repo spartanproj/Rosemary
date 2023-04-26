@@ -146,15 +146,39 @@ class Parser:
             self.emitter.emit(";")
         elif self.checkcur(Type.IDENT):
             log("reassign")
-            if self.curtok.text in self.floats or self.curtok.text in self.ints:
-                pass
+            if self.checkpeek(Type.PLUSEQ):
+                self.emitter.emitn(self.curtok.text+"+=")
+                self.next()
+                self.match(Type.PLUSEQ)
+                self.expression()
+                self.emitter.emit(";")
+            elif self.checkpeek(Type.MINUSEQ):
+                self.emitter.emitn(self.curtok.text+"-=")
+                self.next()
+                self.match(Type.MINUSEQ)
+                self.expression()
+                self.emitter.emit(";")
+            elif self.checkpeek(Type.ASTEQ):
+                self.emitter.emitn(self.curtok.text+"*=")
+                self.next()
+                self.match(Type.ASTEQ)
+                self.expression()
+                self.emitter.emit(";")
+            elif self.checkpeek(Type.SLASHEQ):
+                self.emitter.emitn(self.curtok.text+"/=")
+                self.next()
+                self.match(Type.SLASHEQ)
+                self.expression()
+                self.emitter.emit(";")
+            elif self.curtok.text in self.floats or self.curtok.text in self.ints:
+                self.emitter.emitn(self.curtok.text+"=")
+                self.next()
+                self.match(Type.EQ)
+                self.expression()
+                self.emitter.emit(";")
             else:
                 self.panic("Attempting to reassign variable before assignment - ",self.curtok.text)
-            self.emitter.emitn(self.curtok.text+"=")
-            self.next()
-            self.match(Type.EQ)
-            self.expression()
-            self.emitter.emit(";")
+            
         elif self.checkcur(Type.input):
             log("input")
             self.next()
@@ -199,6 +223,7 @@ class Parser:
             self.emitter.emitn(self.curtok.text)
             self.next()
             self.term()
+        
     def term(self):
         log("TERM")
         self.unary()
