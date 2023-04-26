@@ -2,4 +2,5 @@ rsmy
 *.o
 /__pycache__/*
 *.c
+!runner.c
 src/__pycache__/
