@@ -1,3 +1,6 @@
+int a = 3
+input a
 loop 10 {
-    print "hi"
+    print a
+    a = a-1
 }

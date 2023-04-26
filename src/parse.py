@@ -10,9 +10,13 @@ class Parser:
     def __init__(self,lexer,emitter):
         self.lexer = lexer
         self.emitter=emitter
-        self.symbols=set()
+
+        self.floats=set()
+        self.ints=set()
+
         self.labels=set()
         self.gotos=set()
+    
         self.curtok = None
         self.peektok = None
         self.next()
@@ -51,10 +55,19 @@ class Parser:
             if self.checkcur(Type.STRING):
                 self.emitter.emit("printf(\""+self.curtok.text+"\\n\");")
                 self.next()
-            else:
+            elif self.curtok.text in self.floats:
                 self.emitter.emitn("printf(\"%" + ".2f\\n\", (float)(")
                 self.expression()
                 self.emitter.emit("));")
+            elif self.curtok.text in self.ints:
+                self.emitter.emitn("printf(\"%" + "d\\n\",")
+                self.expression()
+                self.emitter.emit(");")
+            elif self.checkcur(Type.NUMBER):
+                self.emitter.emit("printf(\"%d\",\""+self.curtok.text+"\"\\n\");")
+                self.next()
+            else:
+                self.panic("Argument to print is erroneous - "+self.curtok.text)
         elif self.checkcur(Type.IF):
             log("IF")
             self.next()
@@ -108,25 +121,57 @@ class Parser:
         elif self.checkcur(Type.float):
             log("float")
             self.next()
-            if self.curtok.text not in self.symbols:
-                self.symbols.add(self.curtok.text)
+            if self.curtok.text not in self.floats:
+                self.floats.add(self.curtok.text)
                 self.emitter.headeremit("float " + self.curtok.text + ";")
             self.emitter.emitn(self.curtok.text+"=")
             self.match(Type.IDENT)
             self.match(Type.EQ)
             self.expression()
             self.emitter.emit(";")
+        elif self.checkcur(Type.int):
+            log("int")
+            self.next()
+            if self.curtok.text not in self.ints:
+                self.ints.add(self.curtok.text)
+                self.emitter.headeremit("int " + self.curtok.text + ";")
+            self.emitter.emitn(self.curtok.text+"=")
+            self.match(Type.IDENT)
+            self.match(Type.EQ)
+            try:
+                int(self.curtok.text)
+            except:
+                self.panic("Attempting to assign non-integer value to int variable")
+            self.expression()
+            self.emitter.emit(";")
+        elif self.checkcur(Type.IDENT):
+            log("reassign")
+            if self.curtok.text in self.floats or self.curtok.text in self.ints:
+                pass
+            else:
+                self.panic("Attempting to reassign variable before assignment - ",self.curtok.text)
+            self.emitter.emitn(self.curtok.text+"=")
+            self.next()
+            self.match(Type.EQ)
+            self.expression()
+            self.emitter.emit(";")
         elif self.checkcur(Type.input):
             log("input")
             self.next()
-            if self.curtok.text not in self.symbols:
-                self.symbols.add(self.curtok.text)
-                self.emitter.headeremit("float " + self.curtok.text + ";")
-            self.emitter.emit("if(0 == scanf(\"%" + "f\", &" + self.curtok.text + ")) {")
-            self.emitter.emit(self.curtok.text + " = 0;")
-            self.emitter.emitn("scanf(\"%")
-            self.emitter.emit("*s\");")
-            self.emitter.emit("}")
+            if self.curtok.text not in self.floats and self.curtok.text not in self.ints:
+                self.panic("Attempting to input into uninitialised variable "+self.curtok.text)
+            if self.curtok.text in self.floats:
+                self.emitter.emit("if(0 == scanf(\"%" + "f\", &" + self.curtok.text + ")) {")
+                self.emitter.emit(self.curtok.text + " = 0;")
+                self.emitter.emitn("scanf(\"%")
+                self.emitter.emit("*s\");")
+                self.emitter.emit("}")
+            elif self.curtok.text in self.ints:
+                self.emitter.emit("if(0 == scanf(\"%" + "d\", &" + self.curtok.text + ")) {")
+                self.emitter.emit(self.curtok.text + " = 0;")
+                self.emitter.emitn("scanf(\"%")
+                self.emitter.emit("*s\");")
+                self.emitter.emit("}")
             self.match(Type.IDENT)
         
         else:
@@ -172,8 +217,13 @@ class Parser:
         if self.checkcur(Type.NUMBER):
             self.emitter.emitn(self.curtok.text)
             self.next()
+        elif self.checkcur(Type.STRING):
+            self.emitter.emitn(self.curtok.text)
+            self.next()
         elif self.checkcur(Type.IDENT):
-            if self.curtok.text not in self.symbols:
+            if self.curtok.text in self.floats or self.curtok.text in self.ints:
+                pass
+            else:
                 self.panic("Referencing variable before assignment: " + self.curtok.text)
             self.emitter.emitn(self.curtok.text)
             self.next()

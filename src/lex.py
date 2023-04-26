@@ -156,6 +156,8 @@ class Type(enum.Enum):
         WHILE = 109
         end=110
         loop=111
+        int=112
+        string=113
         EQ = 201  
         PLUS = 202
         MINUS = 203
