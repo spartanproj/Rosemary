@@ -22,7 +22,7 @@ class Lexer:
         while self.cur in [" ","\t","\r"]:
             self.next()
     def comm(self):
-        if self.cur=="#":
+        if self.cur=="/" and self.peek()=="/":
             while self.cur!="\n":
                 self.next()
     def getToken(self):
