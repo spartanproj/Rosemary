@@ -161,7 +161,7 @@ class Type(enum.Enum):
         NEWLINE = 0
         NUMBER = 1
         IDENT = 2
-        STRING = 3
+        STRING = 3 # string x = *"hello!"*
         label = 101
         goto = 102
         print = 103
@@ -172,7 +172,7 @@ class Type(enum.Enum):
         end=110
         loop=111
         int=112
-        string=113
+        string=113 # *string* x = "hello!"
         EQ = 201  
         PLUS = 202
         MINUS = 203

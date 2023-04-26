@@ -27,7 +27,11 @@ print s/a
 ### Syntax
 <table>
 <tr>
-<td> Rosemary </td> <td> C </td> <td> Python </td>
+<td> 
+
+## Rosemary </td> <td> 
+## C </td> <td> 
+## Python </td>
 </tr>
 <tr>
 <td> 
@@ -63,7 +67,7 @@ if x>=1:
 <td>
 
 ```c
-float a = 0 // not techically needed but for clarity
+float a = 0
 while x>2 {
     input a
     print a
@@ -118,8 +122,44 @@ for x in range(10):
 
 </td>
 </tr>
+<tr>
+<td>
+
+```c
+int x=0
+x+=1
+print x
+```
+</td>
+<td>
+
+```c
+int x=0;
+x+=1;
+print x;
+```
+
+</td>
+<td>
+
+```py
+x=0;
+x+=1;
+print(x);
+```
+
+</td>
+</tr>
 </table>
 
 ### Types: The list
-- float
-- ... more to come
+#### Float
+- Floating point decimal number
+- Equivalent to C's `float`
+#### Int
+- Integer
+- Equivalent to C's `int`
+#### String
+- String
+- Equivalent to C's `char *`
+- No segfaults (you hope)

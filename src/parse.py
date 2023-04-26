@@ -14,7 +14,7 @@ class Parser:
         self.sourcelines=sourcelines
         self.floats=set()
         self.ints=set()
-
+        self.strings=set()
         self.labels=set()
         self.gotos=set()
     
@@ -31,6 +31,9 @@ class Parser:
         if not self.checkcur(kind):
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
         self.next()
+    def matchn(self,kind):
+        if not self.checkcur(kind):
+            self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
     def next(self):
         self.curtok=self.peektok
         self.peektok=self.lexer.getToken()
@@ -66,6 +69,11 @@ class Parser:
                 self.emitter.emitn("printf(\"%" + "d\\n\",")
                 self.expression()
                 self.emitter.emit(");")
+            elif self.curtok.text in self.strings:
+                self.emitter.emitn("printf(")
+                self.emitter.emitn(self.curtok.text)
+                self.emitter.emit(");")
+                self.next()
             elif self.checkcur(Type.NUMBER):
                 self.emitter.emit("printf(\"%d\",\""+self.curtok.text+"\"\\n\");")
                 self.next()
@@ -147,6 +155,23 @@ class Parser:
                 self.panic("Attempting to assign non-integer value to int variable")
             self.expression()
             self.emitter.emit(";")
+        elif self.checkcur(Type.string):
+            log("string")
+            self.next()
+            if self.curtok.text not in self.strings:
+                self.strings.add(self.curtok.text)
+                self.emitter.headeremit("char * " + self.curtok.text + ";")
+            self.emitter.emitn(self.curtok.text+"=\"")
+            self.match(Type.IDENT)
+            self.match(Type.EQ)
+            try:
+                str(self.curtok.text)
+            except:
+                self.panic("Attempting to assign non-string value to string variable")
+            self.matchn(Type.STRING)
+            self.emitter.emitn(self.curtok.text)
+            self.next()
+            self.emitter.emit("\";")
         elif self.checkcur(Type.IDENT):
             log("reassign")
             if self.checkpeek(Type.PLUSEQ):
@@ -173,7 +198,7 @@ class Parser:
                 self.match(Type.SLASHEQ)
                 self.expression()
                 self.emitter.emit(";")
-            elif self.curtok.text in self.floats or self.curtok.text in self.ints:
+            elif self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
                 self.emitter.emitn(self.curtok.text+"=")
                 self.next()
                 self.match(Type.EQ)
@@ -195,6 +220,12 @@ class Parser:
                 self.emitter.emit("}")
             elif self.curtok.text in self.ints:
                 self.emitter.emit("if(0 == scanf(\"%" + "d\", &" + self.curtok.text + ")) {")
+                self.emitter.emit(self.curtok.text + " = 0;")
+                self.emitter.emitn("scanf(\"%")
+                self.emitter.emit("*s\");")
+                self.emitter.emit("}")
+            elif self.curtok.text in self.strings:
+                self.emitter.emit("if(0 == scanf(\"%" + "s\"," + self.curtok.text + ")) {")
                 self.emitter.emit(self.curtok.text + " = 0;")
                 self.emitter.emitn("scanf(\"%")
                 self.emitter.emit("*s\");")
@@ -249,7 +280,7 @@ class Parser:
             self.emitter.emitn(self.curtok.text)
             self.next()
         elif self.checkcur(Type.IDENT):
-            if self.curtok.text in self.floats or self.curtok.text in self.ints:
+            if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
                 pass
             else:
                 self.panic("Referencing variable before assignment: " + self.curtok.text)

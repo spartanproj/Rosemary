@@ -1,6 +1,6 @@
-int a = 3
-input a
-loop 10 {
+string x ="hi"
+int a =5
+while a!=0 {
     print a
-    a-1
+    a-=1
 }
