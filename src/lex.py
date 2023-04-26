@@ -32,13 +32,29 @@ class Lexer:
         matched=True
         match self.cur:
             case "+":
-                token=Token(self.cur,Type.PLUS)
+                if self.peek()=="=":
+                    token=Token(self.source[self.pos:self.pos+1],Type.PLUSEQ)
+                    self.next()
+                else:
+                    token=Token(self.cur,Type.PLUS)
             case "-":
-                token=Token(self.cur,Type.MINUS)
+                if self.peek()=="=":
+                    token=Token(self.source[self.pos:self.pos+1],Type.MINUSEQ)
+                    self.next()
+                else:
+                    token=Token(self.cur,Type.MINUS)
             case "*":
-                token=Token(self.cur,Type.ASTERISK)
+                if self.peek()=="=":
+                    token=Token(self.source[self.pos:self.pos+1],Type.ASTEQ)
+                    self.next()
+                else:
+                    token=Token(self.cur,Type.ASTERISK)
             case "/":
-                token=Token(self.cur,Type.FSLASH)
+                if self.peek()=="=":
+                    token=Token(self.source[self.pos:self.pos+1],Type.SLASHEQ)
+                    self.next()
+                else:
+                    token=Token(self.cur,Type.FSLASH)
             case "\n":
                 token=Token(self.cur,Type.NEWLINE)
             case "\0":
@@ -81,7 +97,6 @@ class Lexer:
                     self.next()
                     self.next()
             case "w":
-                print("w")
                 initpos=self.pos
                 if self.peek()=="h":
                     self.next()
@@ -156,6 +171,8 @@ class Type(enum.Enum):
         WHILE = 109
         end=110
         loop=111
+        int=112
+        string=113
         EQ = 201  
         PLUS = 202
         MINUS = 203
@@ -169,3 +186,7 @@ class Type(enum.Enum):
         GTEQ = 211
         LBRACK=212
         RBRACK=213
+        PLUSEQ=214
+        MINUSEQ=215
+        ASTEQ=216
+        SLASHEQ=217
