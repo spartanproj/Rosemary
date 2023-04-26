@@ -7,10 +7,6 @@ if len(sys.argv) != 3:
 with open(sys.argv[1], 'r') as inputFile:
     source = inputFile.read()
 # Initialize the lexer and parser.
-source=source.replace("{","")
-source=source.replace("}","end")
-source=source.replace("if","IF")
-source=source.replace("while","WHILE")
 lexer = Lexer(source)
 emitter=Emitter(sys.argv[2])
 parser = Parser(lexer,emitter)

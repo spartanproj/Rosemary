@@ -1,33 +1,11 @@
 #include <stdio.h>
 int main(void) {
-float a;
-float b;
-float s;
-float c;
-a=0;
-while(a<1){
-printf("Enter number of scores4: \n");
-if(0 == scanf("%f", &a)) {
-a = 0;
-scanf("%*s");
+float x;
+x=2;
+while(x>0){
+x=x-1;
+printf("hello\n");
+printf("%.2f\n", (float)(x));
 }
-}
-if(
-a<=2){
-printf("a is 2\n");
-}
-b=0;
-s=0;
-printf("Enter one value at a time: \n");
-while(b<a){
-if(0 == scanf("%f", &c)) {
-c = 0;
-scanf("%*s");
-}
-s=s+c;
-b=b+1;
-}
-printf("Average: \n");
-printf("%.2f\n", (float)(s/a));
 return 0;
 }

@@ -71,6 +71,28 @@ class Lexer:
                     token=Token(last+self.cur, Type.NOTEQ)
                 else:
                     self.panic("Expected !=, got !"+self.peek())
+            case "{":
+                token=Token(self.cur,Type.LBRACK)
+            case "}":
+                token=Token(self.cur,Type.RBRACK)
+            case "i":
+                if self.peek()=="f":
+                    token=Token(self.cur+self.source[self.pos+1],Type.IF)
+                    self.next()
+                    self.next()
+            case "w":
+                print("w")
+                initpos=self.pos
+                if self.peek()=="h":
+                    self.next()
+                    if self.peek()=="i":
+                        self.next()
+                        if self.peek()=="l":
+                            self.next()
+                            if self.peek()=="e":
+                                token=Token(self.source[initpos:self.pos],Type.WHILE)
+                                self.next()
+                                self.next()
             case "\"":
                 self.next()
                 start=self.pos
@@ -144,3 +166,5 @@ class Type(enum.Enum):
         LTEQ = 209
         GT = 210
         GTEQ = 211
+        LBRACK=212
+        RBRACK=213

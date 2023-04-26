@@ -59,28 +59,30 @@ class Parser:
             self.next()
             self.emitter.emit("if(")
             self.comparison()
+            self.match(Type.LBRACK)
             self.nl()
             self.emitter.emit("){")
-            while not self.checkcur(Type.end):
+            while not self.checkcur(Type.RBRACK):
                 self.statement()
-            self.match(Type.end)
+            self.match(Type.RBRACK)
             self.emitter.emit("}")
         elif self.checkcur(Type.WHILE):
             log("WHILE")
             self.next()
             self.emitter.emitn("while(")
             self.comparison()
+            self.match(Type.LBRACK)
             self.nl()
             self.emitter.emit("){")
-            while not self.checkcur(Type.end):
+            while not self.checkcur(Type.RBRACK):
                 self.statement()
-            self.match(Type.end)
+            self.match(Type.RBRACK)
             self.emitter.emit("}")
         elif self.checkcur(Type.label):
             log("label")
             self.next()
             if self.curtok.text in self.labels:
-                self.panic("Label already exists: " + self.curToken.text)
+                self.panic("Label already exists: " + self.curtok.text)
             self.labels.add(self.curtok.text)
             self.emitter.emit(self.curtok.text+":")
             self.match(Type.IDENT)
