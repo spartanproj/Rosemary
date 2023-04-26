@@ -34,6 +34,7 @@ class Parser:
         log("PROGRAM")
         self.emitter.headeremit("#include <stdio.h>")
         self.emitter.headeremit("int main(void) {")
+        self.emitter.headeremit("int iterable")
         while self.checkcur(Type.NEWLINE):
             self.next()
         while not self.checkcur(Type.EOF):
@@ -115,6 +116,18 @@ class Parser:
             self.emitter.emit("*s\");")
             self.emitter.emit("}")
             self.match(Type.IDENT)
+        elif self.checkcur(Type.loop):
+            log("loop")
+            self.next()
+            self.emitter.emitn("for(iterable=0;iterable<)")
+            self.expression()
+            self.next()
+            self.match(Type.LBRACK)
+            self.emitter.emit(";iterable++{")
+            while not self.checkcur(Type.RBRACK):
+                self.statement()
+            self.match(Type.RBRACK)
+            self.emitter.emit("}")
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()

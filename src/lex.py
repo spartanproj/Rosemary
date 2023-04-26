@@ -155,6 +155,7 @@ class Type(enum.Enum):
         IF = 106
         WHILE = 109
         end=110
+        loop=111
         EQ = 201  
         PLUS = 202
         MINUS = 203

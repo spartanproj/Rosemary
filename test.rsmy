@@ -1,6 +1,0 @@
-float x = 2
-while x>0 {
-    float x = x - 1
-    print "hello"
-    print x
-}
