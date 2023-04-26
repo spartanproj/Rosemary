@@ -7,10 +7,11 @@ def log(*args):
         print(x)
     return 1
 class Parser:
-    def __init__(self,lexer,emitter):
+    def __init__(self,lexer,emitter,sourcelines):
         self.lexer = lexer
         self.emitter=emitter
 
+        self.sourcelines=sourcelines
         self.floats=set()
         self.ints=set()
 
@@ -19,6 +20,7 @@ class Parser:
     
         self.curtok = None
         self.peektok = None
+        self.line=1
         self.next()
         self.next()
     def checkcur(self,kind):
@@ -33,13 +35,14 @@ class Parser:
         self.curtok=self.peektok
         self.peektok=self.lexer.getToken()
     def panic(self,msg):
-        sys.exit("Error - "+msg)
+        sys.exit("Error - "+msg+ " at token "+self.curtok.text+self.peektok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
     def program(self):
         log("PROGRAM")
         self.emitter.headeremit("#include <stdio.h>")
         self.emitter.headeremit("int main(void) {")
         self.emitter.headeremit("int iterable;")
         while self.checkcur(Type.NEWLINE):
+            self.line+=1
             self.next()
         while not self.checkcur(Type.EOF):
             self.statement()
@@ -256,5 +259,8 @@ class Parser:
             self.panic("Unexpected token at "+self.curtok.text)
     def nl(self):
         self.match(Type.NEWLINE)
+        self.line+=1
         while self.checkcur(Type.NEWLINE):
             self.next()
+            self.line+=1
+        

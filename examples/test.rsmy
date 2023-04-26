@@ -2,5 +2,5 @@ int a = 3
 input a
 loop 10 {
     print a
-    a-=1
+    a-1
 }
