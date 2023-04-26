@@ -3,7 +3,7 @@ A blend of Python and C. Transpiled to C
 
 For example, a basic program:
 ```c
-float a=0
+int a=0
 while a<1 {
     print "Enter number of scores: "
     input a
@@ -11,13 +11,13 @@ while a<1 {
 if a<=2 {
     print "a is 2"
 }
-float b=0
-float s=0
+int b=0
+int s=0
 print "Enter one value at a time: "
 while b<a {
     input c
-    float s=s+c
-    float b=b+1
+    s+=c
+    b+=1
 }
 
 print "Average: "
