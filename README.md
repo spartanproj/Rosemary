@@ -12,8 +12,9 @@ if a<=2 {
     print "a is 2"
 }
 int b=0
-int s=0
+float s=0
 print "Enter one value at a time: "
+int c=0
 while b<a {
     input c
     s+=c
