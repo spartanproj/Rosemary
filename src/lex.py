@@ -59,8 +59,10 @@ class Lexer:
                 if self.peek()=="=":
                     token=Token(self.source[self.pos:self.pos+1],Type.SLASHEQ)
                     self.next()
+                    initpos=self.pos
                 else:
                     token=Token(self.cur,Type.FSLASH)
+                
             case "\n":
                 token=Token(self.cur,Type.NEWLINE)
             case "\0":
@@ -148,7 +150,7 @@ class Lexer:
                         self.panic("Illegal character in string literal "+self.cur)
                     self.next()
 
-                tokText=self.source[start:self.pos]
+                tokText=self.source[start:self.pos].replace("'","\"").replace("¬","\n")
                 token=Token(tokText,Type.STRING)
             case ",":
                 token=Token(self.cur,Type.COMMA)
@@ -213,6 +215,7 @@ class Type(enum.Enum):
         ints=117
         floats=118
         strings=119
+        extern=120
         EQ = 201  
         PLUS = 202
         MINUS = 203

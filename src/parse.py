@@ -47,6 +47,7 @@ class Parser:
     def program(self):
         log("PROGRAM")
         self.emitter.headeremit("#include <stdio.h>")
+        self.emitter.headeremit("#include <stdint.h>")
         self.emitter.headeremit("int main(void) {")
         self.emitter.headeremit("int iterable;")
         while self.checkcur(Type.NEWLINE):
@@ -126,7 +127,7 @@ class Parser:
             log("loop")
             self.next()
             self.emitter.emitn("for(iterable=0;iterable<")
-            self.unary()
+            self.expression()
             self.match(Type.LBRACK)
             self.nl()
             self.emitter.emit(";iterable++){")
@@ -176,14 +177,15 @@ class Parser:
             self.next()
             if self.curtok.text not in self.ints:
                 self.ints.add(self.curtok.text)
-                self.emitter.headeremit("int " + self.curtok.text + ";")
+                self.emitter.headeremit("int64_t " + self.curtok.text + ";")
             self.emitter.emitn(self.curtok.text+"=")
             self.match(Type.IDENT)
             self.match(Type.EQ)
             try:
                 int(self.curtok.text)
             except:
-                self.panic("Attempting to assign non-integer value to int variable")
+                if self.curtok.text not in self.ints:
+                    self.panic("Attempting to assign non-integer value to int variable")
             self.expression()
             self.emitter.emit(";")
         elif self.checkcur(Type.ints):
@@ -192,7 +194,7 @@ class Parser:
             while self.checkcur(Type.IDENT):
                 if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
                     self.panic("Attempting to redeclare variable - "+self.curtok.text)
-                self.emitter.emitn("int ")
+                self.emitter.emitn("int64_t ")
                 self.emitter.emitn(self.curtok.text)
                 self.emitter.emit("=0;")
                 self.ints.add(self.curtok.text)
@@ -244,7 +246,17 @@ class Parser:
                 self.next()
                 if not self.checkcur(Type.COMMA):
                     break
-                self.next()  
+                self.next() 
+        elif self.checkcur(Type.extern):
+            log("extern")
+            print("""
+WARNING
+C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
+            self.next()
+            self.matchn(Type.STRING)
+            print(self.curtok.text,"\n\n")
+            self.emitter.emit(self.curtok.text)
+            self.next()
         elif self.checkcur(Type.IDENT):
             log("reassign")
             if self.checkpeek(Type.PLUSEQ):

@@ -1,0 +1,15 @@
+//FIB
+//Fibonacci sequence up to input
+ints howmany,temp
+print "Enter number of digits:"
+// input howmany
+int num1=0
+int num2=1
+print num1
+print num2
+loop howmany-2 {
+    print num1+num2
+    temp=num1
+    num1=num2
+    num2=temp+num2
+}

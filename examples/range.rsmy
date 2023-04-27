@@ -1,0 +1,23 @@
+//Range
+// Get range of user input
+ints max,numi,temp
+print "How many numbers?"
+input numi
+int orig=numi
+int min=0
+print "Enter one by one:"
+while numi>0 {
+    input temp
+    if orig==numi {
+        min=temp
+    }
+    if temp<min {
+        min=temp
+    } elif temp>max {
+        max=temp
+    }
+    numi--
+}
+print "Range:"
+print max-min
+int range=max-min

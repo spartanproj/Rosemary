@@ -1,0 +1,7 @@
+// EXTERN into c
+// Allows you to insert C code into a Rosemary program
+// 'whatever' is replaced with "whatever"
+// and ¬ is replaced with \n
+ints x
+extern "x = 3;"
+print x
