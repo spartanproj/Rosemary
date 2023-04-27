@@ -43,11 +43,15 @@ class Parser:
         self.curtok=self.peektok
         self.peektok=self.lexer.getToken()
     def panic(self,msg):
-        sys.exit("Error - "+msg+ " at token "+self.curtok.text+self.peektok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
+        sys.exit("Error - "+msg+ " at token "+self.curtok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
+    def warning(self,msg):
+        sys.exit("Warning - "+msg+ " at token "+self.curtok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
     def program(self):
         log("PROGRAM")
         self.emitter.headeremit("#include <stdio.h>")
         self.emitter.headeremit("#include <stdint.h>")
+        self.emitter.headeremit("#include <stdlib.h>")
+        self.emitter.headeremit("#include <string.h>")
         self.emitter.headeremit("int main(void) {")
         self.emitter.headeremit("int iterable;")
         while self.checkcur(Type.NEWLINE):
@@ -89,7 +93,10 @@ class Parser:
             log("IF")
             self.next()
             self.emitter.emitn("if(")
-            self.comparison()
+            if self.checkpeek(Type.DOUDOL):
+                self.strcmp()
+            else:
+                self.comparison()
             self.match(Type.LBRACK)
             self.nl()
             self.emitter.emit("){")
@@ -101,7 +108,10 @@ class Parser:
                 log("elif")
                 self.next()
                 self.emitter.emitn("else if(")
-                self.comparison()
+                if self.checkpeek(Type.DOUDOL):
+                    self.strcmp()
+                else:
+                    self.comparison()
                 self.match(Type.LBRACK)
                 self.nl()
                 self.emitter.emit("){")
@@ -221,7 +231,7 @@ class Parser:
             self.next()
             if self.curtok.text not in self.strings:
                 self.strings.add(self.curtok.text)
-                self.emitter.headeremit("char * " + self.curtok.text + ";")
+                self.emitter.headeremit("char * " + self.curtok.text + "=malloc(8192);")
             self.emitter.emitn(self.curtok.text+"=\"")
             self.match(Type.IDENT)
             self.match(Type.EQ)
@@ -234,15 +244,15 @@ class Parser:
             self.next()
             self.emitter.emit("\";")
         elif self.checkcur(Type.strings):
-            log("floats")
+            log("strings")
             self.next()
             while self.checkcur(Type.IDENT):
                 if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
                     self.panic("Attempting to redeclare variable - "+self.curtok.text)
                 self.emitter.emitn("char * ")
                 self.emitter.emitn(self.curtok.text)
-                self.emitter.emit("=\"\\0\";")
-                self.floats.add(self.curtok.text)
+                self.emitter.emit("=malloc(8192);")
+                self.strings.add(self.curtok.text)
                 self.next()
                 if not self.checkcur(Type.COMMA):
                     break
@@ -309,7 +319,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
         elif self.checkcur(Type.input):
             log("input")
             self.next()
-            if self.curtok.text not in self.floats and self.curtok.text not in self.ints:
+            if self.curtok.text not in self.floats and self.curtok.text not in self.ints and self.curtok.text not in self.strings:
                 self.panic("Attempting to input into uninitialised variable "+self.curtok.text)
             if self.curtok.text in self.floats:
                 self.emitter.emit("if(0 == scanf(\"%" + "f\", &" + self.curtok.text + ")) {")
@@ -324,7 +334,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                 self.emitter.emit("*s\");")
                 self.emitter.emit("}")
             elif self.curtok.text in self.strings:
-                self.emitter.emit("if(0 == scanf(\"%" + "s\"," + self.curtok.text + ")) {")
+                self.emitter.emit("if(0 == scanf(\"%" + "s\", " + self.curtok.text + ")) {")
                 self.emitter.emit(self.curtok.text + " = 0;")
                 self.emitter.emitn("scanf(\"%")
                 self.emitter.emit("*s\");")
@@ -335,6 +345,17 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()
+    def strcmp(self):
+        log("strcmp")
+        prevtok=self.curtok.text
+        self.next()
+        self.emitter.emitn("!strcmp(")
+        self.emitter.emitn(prevtok)
+        self.match(Type.DOUDOL)
+        self.emitter.emitn(",\"")
+        self.matchn(Type.STRING)
+        self.emitter.emit(self.curtok.text+"\")")
+        self.next()
     def comparison(self):
         log("COMPARISON")
         self.expression()
@@ -377,7 +398,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             self.emitter.emitn(self.curtok.text)
             self.next()
         elif self.checkcur(Type.STRING):
-            self.emitter.emitn(self.curtok.text)
+            self.emitter.emitn("\""+self.curtok.text+"\"")
             self.next()
         elif self.checkcur(Type.IDENT):
             if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:

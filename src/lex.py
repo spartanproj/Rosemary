@@ -146,7 +146,7 @@ class Lexer:
                 self.next()
                 start=self.pos
                 while self.cur!="\"":
-                    if self.cur in ["\r","\n","\t","\\","%"]:
+                    if self.cur in ["\r","\t","%"]:
                         self.panic("Illegal character in string literal "+self.cur)
                     self.next()
 
@@ -154,6 +154,11 @@ class Lexer:
                 token=Token(tokText,Type.STRING)
             case ",":
                 token=Token(self.cur,Type.COMMA)
+            case "$":
+                if self.peek()=="$":
+                    token=Token(self.source[self.pos:self.pos+1],Type.DOUDOL)
+                    self.next()
+                    initpos=self.pos
             case _:
                 matched=False
         if self.cur.isdigit() and not matched:
@@ -235,4 +240,5 @@ class Type(enum.Enum):
         SLASHEQ=217
         PLUSPLUS=218
         MINMIN=219
-        COMMA=218
+        COMMA=220
+        DOUDOL=221

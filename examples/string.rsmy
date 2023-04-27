@@ -1,0 +1,9 @@
+string x = "hello"
+strings f
+print "Input a string"
+input f
+if f$$"gh" { // $$ is for string evaluation. This way it is clear what is being checked.
+    print "GitHub"
+} elif f$$"hg" {
+    print "Alias for history grep?"
+}
