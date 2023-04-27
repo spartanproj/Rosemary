@@ -1,4 +1,4 @@
-import sys
+import sys,os
 from lex import *
 log=True
 def log(*args):
@@ -34,6 +34,8 @@ class Parser:
     def matchopt(self,kind):
         if self.checkcur(kind):
             self.next()
+            return 1
+        return 0
     def matchn(self,kind):
         if not self.checkcur(kind):
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
@@ -184,6 +186,34 @@ class Parser:
                 self.panic("Attempting to assign non-integer value to int variable")
             self.expression()
             self.emitter.emit(";")
+        elif self.checkcur(Type.ints):
+            log("ints")
+            self.next()
+            while self.checkcur(Type.IDENT):
+                if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+                    self.panic("Attempting to redeclare variable - "+self.curtok.text)
+                self.emitter.emitn("int ")
+                self.emitter.emitn(self.curtok.text)
+                self.emitter.emit("=0;")
+                self.ints.add(self.curtok.text)
+                self.next()
+                if not self.checkcur(Type.COMMA):
+                    break
+                self.next()
+        elif self.checkcur(Type.floats):
+            log("floats")
+            self.next()
+            while self.checkcur(Type.IDENT):
+                if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+                    self.panic("Attempting to redeclare variable - "+self.curtok.text)
+                self.emitter.emitn("float ")
+                self.emitter.emitn(self.curtok.text)
+                self.emitter.emit("=0;")
+                self.floats.add(self.curtok.text)
+                self.next()
+                if not self.checkcur(Type.COMMA):
+                    break
+                self.next()  
         elif self.checkcur(Type.string):
             log("string")
             self.next()
@@ -227,6 +257,21 @@ class Parser:
                 self.match(Type.SLASHEQ)
                 self.expression()
                 self.emitter.emit(";")
+            elif self.checkpeek(Type.PLUSPLUS):
+                if self.curtok.text in self.floats or self.curtok.text in self.ints:
+                    self.emitter.emitn(self.curtok.text+"++;")
+                    self.next()
+                    self.match(Type.PLUSPLUS)
+                else:
+                    self.panic("Attempting to increment non-numeric value - "+self.curtok.text)
+            elif self.checkpeek(Type.MINMIN):
+                if self.curtok.text in self.floats or self.curtok.text in self.ints:
+                    self.emitter.emitn(self.curtok.text+"--;")
+                    self.next()
+                    self.match(Type.MINMIN)
+                else:
+                    self.panic("Attempting to decrement non-numeric value - "+self.curtok.text)
+            
             elif self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
                 self.emitter.emitn(self.curtok.text+"=")
                 self.next()
@@ -234,8 +279,7 @@ class Parser:
                 self.expression()
                 self.emitter.emit(";")
             else:
-                self.panic("Attempting to reassign variable before assignment - ",self.curtok.text)
-            
+                self.panic("Attempting to reassign variable before assignment - "+self.curtok.text)
         elif self.checkcur(Type.input):
             log("input")
             self.next()
@@ -260,7 +304,8 @@ class Parser:
                 self.emitter.emit("*s\");")
                 self.emitter.emit("}")
             self.match(Type.IDENT)
-        
+        elif self.checkcur(Type.inc):
+            pass
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()

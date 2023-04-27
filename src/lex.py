@@ -35,11 +35,17 @@ class Lexer:
                 if self.peek()=="=":
                     token=Token(self.source[self.pos:self.pos+1],Type.PLUSEQ)
                     self.next()
+                elif self.peek()=="+":
+                    token=Token(self.source[self.pos:self.pos+1],Type.PLUSPLUS)
+                    self.next()
                 else:
                     token=Token(self.cur,Type.PLUS)
             case "-":
                 if self.peek()=="=":
                     token=Token(self.source[self.pos:self.pos+1],Type.MINUSEQ)
+                    self.next()
+                elif self.peek()=="-":
+                    token=Token(self.source[self.pos:self.pos+1],Type.MINMIN)
                     self.next()
                 else:
                     token=Token(self.cur,Type.MINUS)
@@ -124,6 +130,16 @@ class Lexer:
                             token=Token(self.source[initpos:self.pos],Type.ELSE)
                             self.next()
                             self.next()
+            case "i":
+                initpos=self.pos
+                if self.peek()=="n":
+                    self.next()
+                    if self.peek()=="c":
+                        self.next()
+                        token=Token(self.source[initpos:self.pos],Type.inc)
+                        self.next()
+                        self.next()
+             
             case "\"":
                 self.next()
                 start=self.pos
@@ -134,6 +150,8 @@ class Lexer:
 
                 tokText=self.source[start:self.pos]
                 token=Token(tokText,Type.STRING)
+            case ",":
+                token=Token(self.cur,Type.COMMA)
             case _:
                 matched=False
         if self.cur.isdigit() and not matched:
@@ -191,6 +209,10 @@ class Type(enum.Enum):
         string=113 # *string* x = "hello!"
         ELIF=114
         ELSE=115
+        inc=116
+        ints=117
+        floats=118
+        strings=119
         EQ = 201  
         PLUS = 202
         MINUS = 203
@@ -208,3 +230,6 @@ class Type(enum.Enum):
         MINUSEQ=215
         ASTEQ=216
         SLASHEQ=217
+        PLUSPLUS=218
+        MINMIN=219
+        COMMA=218

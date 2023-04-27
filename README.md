@@ -1,6 +1,5 @@
 # Rosemary
 A blend of Python and C. Transpiled to C
-
 For example, a basic program:
 ```c
 int a=0
@@ -18,7 +17,7 @@ int c=0
 while b<a {
     input c
     s+=c
-    b+=1
+    b++
 }
 
 print "Average: "
