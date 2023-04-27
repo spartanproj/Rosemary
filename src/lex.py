@@ -108,6 +108,22 @@ class Lexer:
                                 token=Token(self.source[initpos:self.pos],Type.WHILE)
                                 self.next()
                                 self.next()
+            case "e":
+                initpos=self.pos
+                if self.peek()=="l":
+                    self.next()
+                    if self.peek()=="i":
+                        self.next()
+                        if self.peek()=="f":
+                            token=Token(self.source[initpos:self.pos],Type.ELIF)
+                            self.next()
+                            self.next()
+                    elif self.peek()=="s":
+                        self.next()
+                        if self.peek()=="e":
+                            token=Token(self.source[initpos:self.pos],Type.ELSE)
+                            self.next()
+                            self.next()
             case "\"":
                 self.next()
                 start=self.pos
@@ -173,6 +189,8 @@ class Type(enum.Enum):
         loop=111
         int=112
         string=113 # *string* x = "hello!"
+        ELIF=114
+        ELSE=115
         EQ = 201  
         PLUS = 202
         MINUS = 203

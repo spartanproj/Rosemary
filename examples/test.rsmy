@@ -1,20 +1,12 @@
 int a=0
-while a<1 {
-    print "Enter number of scores: "
+while a!=3 {
     input a
+    if a==1 {
+        print "a is 1"
+    } elif a==2 {
+        print "a is 2"
+    } else {
+        print "a is not one or two"
+    }
 }
-if a<=2 {
-    print "a is 2"
-}
-int b=0
-float s=0
-print "Enter one value at a time: "
-int c=0
-while b<a {
-    input c
-    s+=c
-    b+=1
-}
-
-print "Average: "
-print s/a
+print "a is 3"

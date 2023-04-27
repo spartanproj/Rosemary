@@ -31,6 +31,9 @@ class Parser:
         if not self.checkcur(kind):
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
         self.next()
+    def matchopt(self,kind):
+        if self.checkcur(kind):
+            self.next()
     def matchn(self,kind):
         if not self.checkcur(kind):
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
@@ -82,7 +85,7 @@ class Parser:
         elif self.checkcur(Type.IF):
             log("IF")
             self.next()
-            self.emitter.emit("if(")
+            self.emitter.emitn("if(")
             self.comparison()
             self.match(Type.LBRACK)
             self.nl()
@@ -91,6 +94,32 @@ class Parser:
                 self.statement()
             self.match(Type.RBRACK)
             self.emitter.emit("}")
+            while self.checkcur(Type.ELIF):
+                log("elif")
+                self.next()
+                self.emitter.emitn("else if(")
+                self.comparison()
+                self.match(Type.LBRACK)
+                self.nl()
+                self.emitter.emit("){")
+                while not self.checkcur(Type.RBRACK):
+                    self.statement()
+                self.match(Type.RBRACK)
+                self.emitter.emit("}")
+            if self.checkcur(Type.ELSE):
+                log("else")
+                self.next()
+                self.emitter.emitn("else")
+                self.match(Type.LBRACK)
+                self.nl()
+                self.emitter.emit("{")
+                while not self.checkcur(Type.RBRACK):
+                    self.statement()
+                self.match(Type.RBRACK)
+                self.emitter.emit("}")
+        elif self.checkcur(Type.ELIF) or self.checkcur(Type.ELSE):
+            ifse="if" if self.checkcur(Type.ELIF) else "se"
+            self.panic(f"El{ifse} without if")
         elif self.checkcur(Type.loop):
             log("loop")
             self.next()

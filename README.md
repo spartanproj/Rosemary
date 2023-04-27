@@ -1,167 +1,65 @@
-# Rosemary
-A blend of Python and C. Transpiled to C
+# rsmy README
 
-For example, a basic program:
-```c
-int a=0
-while a<1 {
-    print "Enter number of scores: "
-    input a
-}
-if a<=2 {
-    print "a is 2"
-}
-int b=0
-float s=0
-print "Enter one value at a time: "
-int c=0
-while b<a {
-    input c
-    s+=c
-    b+=1
-}
+This is the README for your extension "rsmy". After writing up a brief description, we recommend including the following sections.
 
-print "Average: "
-print s/a
-```
+## Features
 
-### Syntax
-<table>
-<tr>
-<td> 
+Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
-## Rosemary </td> <td> 
-## C </td> <td> 
-## Python </td>
-</tr>
-<tr>
-<td> 
+For example if there is an image subfolder under your extension project workspace:
 
-```c
-if x>=1 {
-    print "hi"
-}
-``` 
+\!\[feature X\]\(images/feature-x.png\)
 
-</td>
-<td>
+> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
-```c
-if (x>=1) {
-    printf("hi");
-}
-``` 
+## Requirements
 
-</td>
-<td>
+If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
-```py
-if x>=1:
-    print("hi")
+## Extension Settings
 
-``` 
+Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
 
-</td>
+For example:
 
+This extension contributes the following settings:
 
-<tr>
-<td>
+* `myExtension.enable`: Enable/disable this extension.
+* `myExtension.thing`: Set to `blah` to do something.
 
-```c
-float a = 0
-while x>2 {
-    input a
-    print a
-}
-```
+## Known Issues
 
-</td>
-<td>
+Calling out known issues can help limit users opening duplicate issues against your extension.
 
-```c
-float a = 0;
-while (x>2) {
-    scanf("%f",&a);
-    printf("%d",a);
-}
-```
+## Release Notes
 
-</td>
-<td>
+Users appreciate release notes as you update your extension.
 
-```py
-while x>2:
-    a=float(input())
-    print(a)
-```
+### 1.0.0
 
-</td>
-</tr>
-<tr>
-<td>
+Initial release of ...
 
-```rust
-loop 10 {
-    print "hi"
-}
-```
-</td>
-<td>
+### 1.0.1
 
-```c
-for (int x=0;x<10;x++) {
-    printf("hi");
-}
-```
+Fixed issue #.
 
-</td>
-<td>
+### 1.1.0
 
-```py
-for x in range(10):
-    print("hi")
-```
+Added features X, Y, and Z.
 
-</td>
-</tr>
-<tr>
-<td>
+---
 
-```c
-int x=0
-x+=1
-print x
-```
-</td>
-<td>
+## Working with Markdown
 
-```c
-int x=0;
-x+=1;
-print x;
-```
+You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
 
-</td>
-<td>
+* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
+* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
+* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
 
-```py
-x=0;
-x+=1;
-print(x);
-```
+## For more information
 
-</td>
-</tr>
-</table>
+* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-### Types: The list
-#### Float
-- Floating point decimal number
-- Equivalent to C's `float`
-#### Int
-- Integer
-- Equivalent to C's `int`
-#### String
-- String
-- Equivalent to C's `char *`
-- No segfaults (you hope)
+**Enjoy!**
