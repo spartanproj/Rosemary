@@ -382,7 +382,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
     def term(self):
         log("TERM")
         self.unary()
-        while self.checkcur(Type.ASTERISK) or self.checkcur(Type.FSLASH):
+        while self.checkcur(Type.ASTERISK) or self.checkcur(Type.FSLASH) or self.checkcur(Type.PERCENT):
             self.emitter.emitn(self.curtok.text)
             self.next()
             self.unary()

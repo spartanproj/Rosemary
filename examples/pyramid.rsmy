@@ -1,0 +1,11 @@
+//generate ASCII art pyramid
+ints i,j,rows
+print "How many rows?"
+input rows
+while i<=rows {
+    loop i {
+        extern "printf('* ');" //so no newline
+    }
+    print ""
+    i++
+}

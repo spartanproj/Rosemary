@@ -2,7 +2,7 @@
 //Fibonacci sequence up to input
 ints howmany,temp
 print "Enter number of digits:"
-// input howmany
+input howmany
 int num1=0
 int num2=1
 print num1

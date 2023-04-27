@@ -1,0 +1,15 @@
+//check if n is palindrome
+ints n,reversed,remainder,original
+print "Enter your number:"
+input n
+original=n
+while n!=0 {
+    remainder=n%10
+    reversed=reversed*10+remainder
+    n/=10
+}
+if original==reversed {
+    print "is a palindrome!"
+} else {
+    print "is not a palindrome."
+}

@@ -1,0 +1,21 @@
+//check if n is prime
+ints n,i,flag
+print "Enter your number:"
+input n
+if n<=1 {
+    flag=1
+}
+i=2
+while i<=n/2 {
+    if flag!=1 {
+        if n%i==0 {
+            flag=1
+        }
+    }
+    i++
+}
+if 0==flag {
+    print "is prime"
+} else {
+    print "is composite"
+}

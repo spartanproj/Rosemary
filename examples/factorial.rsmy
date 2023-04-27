@@ -1,0 +1,14 @@
+//factorial of n
+ints n
+print "Factorial of n:"
+input n
+int num1=1
+int total=1
+loop n-1 {
+    total *= num1
+    num1++
+}
+print "factorial of "
+print n
+print "is"
+print total

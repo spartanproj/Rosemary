@@ -1,5 +1,6 @@
 # Rosemary
 ## A blend of Python and C. Transpiled to C
+- Check out [/examples](examples/) for more use cases!
 ## Why use Rosemary?
 ### Ease of use
 - You can write short, efficient code
@@ -133,6 +134,33 @@ for x in range(10):
 
 ```c
 int x=0
+extern "x=3;"
+print x
+```
+</td>
+<td>
+
+```c
+int x=0;
+x=3;
+printf("%d",x)
+```
+
+</td>
+<td>
+
+```py
+# This is hard.
+# also not built in without os.system :)
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+```c
+int x=0
 x+=1
 print x
 ```
@@ -160,42 +188,30 @@ print(x);
 <td>
 
 ```c
-int x=0
-extern "x=3;"
-print x
+strings x
+input x
+if x$$"hi" {
+    print "Hello"
+}
 ```
 </td>
 <td>
 
 ```c
-int x=0;
-x=3;
-printf("%d",x)
+char * f=malloc(8192);
+scanf("%s", f)
+if(!strcmp(f,"gh")){
+    printf("Hello\n");
+}
 ```
 
 </td>
 <td>
 
 ```py
-import cffi
-print_banner("Building CFFI Module")
-ffi = cffi.FFI()
-this_dir = pathlib.Path().absolute()
-h_file_name = this_dir / "c.h"
-with open(h_file_name) as h_file:
-    ffi.cdef(h_file.read())
-ffi.set_source(
-    "cffi_example",
-    '#include "c.h"',
-    libraries=["c"],
-    library_dirs=[this_dir.as_posix()],
-    extra_link_args=["-Wl,-rpath,."],
-)
-ffi.compile()
-os.system("invoke build-cffi")
-...
-# It's not easy..
-# This goes on and on and requires setup
+x=str(input())
+if x=="hi":
+    print("Hello")
 ```
 
 </td>

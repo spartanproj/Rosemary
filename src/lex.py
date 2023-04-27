@@ -116,6 +116,18 @@ class Lexer:
                                 token=Token(self.source[initpos:self.pos],Type.WHILE)
                                 self.next()
                                 self.next()
+            case "b":
+                initpos=self.pos
+                if self.peek()=="r":
+                    self.next()
+                    if self.peek()=="e":
+                        self.next()
+                        if self.peek()=="a":
+                            self.next()
+                            if self.peek()=="k":
+                                token=Token(self.source[initpos:self.pos],Type.BREAK)
+                                self.next()
+                                self.next()
             case "e":
                 initpos=self.pos
                 if self.peek()=="l":
@@ -141,7 +153,6 @@ class Lexer:
                         token=Token(self.source[initpos:self.pos],Type.inc)
                         self.next()
                         self.next()
-             
             case "\"":
                 self.next()
                 start=self.pos
@@ -159,6 +170,10 @@ class Lexer:
                     token=Token(self.source[self.pos:self.pos+1],Type.DOUDOL)
                     self.next()
                     initpos=self.pos
+            case "%":
+                token=Token(self.cur,Type.PERCENT)
+            case "£":
+                token=Token(self.cur,Type.POUND)
             case _:
                 matched=False
         if self.cur.isdigit() and not matched:
@@ -242,3 +257,5 @@ class Type(enum.Enum):
         MINMIN=219
         COMMA=220
         DOUDOL=221
+        PERCENT=222
+        POUND=223

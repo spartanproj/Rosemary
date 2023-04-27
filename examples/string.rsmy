@@ -1,3 +1,4 @@
+//demostrate string manipulation
 string x = "hello"
 strings f
 print "Input a string"
