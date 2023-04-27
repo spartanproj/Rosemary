@@ -67,7 +67,7 @@ class Parser:
                 self.emitter.emit("printf(\""+self.curtok.text+"\\n\");")
                 self.next()
             elif self.curtok.text in self.floats:
-                self.emitter.emitn("printf(\"%" + ".2f\\n\", (float)(")
+                self.emitter.emitn("printf(\"%" + "f\\n\", (float)(")
                 self.expression()
                 self.emitter.emit("));")
             elif self.curtok.text in self.ints:
@@ -231,6 +231,20 @@ class Parser:
             self.emitter.emitn(self.curtok.text)
             self.next()
             self.emitter.emit("\";")
+        elif self.checkcur(Type.strings):
+            log("floats")
+            self.next()
+            while self.checkcur(Type.IDENT):
+                if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+                    self.panic("Attempting to redeclare variable - "+self.curtok.text)
+                self.emitter.emitn("char * ")
+                self.emitter.emitn(self.curtok.text)
+                self.emitter.emit("=\"\\0\";")
+                self.floats.add(self.curtok.text)
+                self.next()
+                if not self.checkcur(Type.COMMA):
+                    break
+                self.next()  
         elif self.checkcur(Type.IDENT):
             log("reassign")
             if self.checkpeek(Type.PLUSEQ):
