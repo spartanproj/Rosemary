@@ -342,6 +342,9 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             self.match(Type.IDENT)
         elif self.checkcur(Type.inc):
             pass
+        elif self.checkcur(Type.ARROW):
+            log("arrow")
+            self.next()
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()

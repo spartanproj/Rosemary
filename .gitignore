@@ -4,3 +4,4 @@ rsmy
 *.c
 !runner.c
 src/__pycache__/
+example.rsmy

@@ -46,6 +46,8 @@ class Lexer:
                     self.next()
                 elif self.peek()=="-":
                     token=Token(self.source[self.pos:self.pos+1],Type.MINMIN)
+                elif self.peek()==">":
+                    token=Token(self.source[self.pos:self.pos+1],Type.ARROW)
                     self.next()
                 else:
                     token=Token(self.cur,Type.MINUS)
@@ -259,3 +261,4 @@ class Type(enum.Enum):
         DOUDOL=221
         PERCENT=222
         POUND=223
+        ARROW=224
