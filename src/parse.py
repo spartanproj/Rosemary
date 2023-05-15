@@ -17,7 +17,8 @@ class Parser:
         self.strings=set()
         self.labels=set()
         self.gotos=set()
-    
+        self.funcs=set()
+
         self.curtok = None
         self.peektok = None
         self.line=1
@@ -314,6 +315,11 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                 self.match(Type.EQ)
                 self.expression()
                 self.emitter.emit(";")
+            elif self.checkpeek(Type.LNBRACK):
+                self.emitter.emit(self.curtok.text+"();")
+                self.next()
+                self.next()
+                self.match(Type.RNBRACK)
             else:
                 self.panic("Attempting to reassign variable before assignment - "+self.curtok.text)
         elif self.checkcur(Type.input):
@@ -342,9 +348,37 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             self.match(Type.IDENT)
         elif self.checkcur(Type.inc):
             pass
-        elif self.checkcur(Type.ARROW):
-            log("arrow")
+        elif self.checkcur(Type.func):
+            log("func definition")
+            self.emitter.emitn("int ")
             self.next()
+            self.emitter.emitn(self.curtok.text)
+            print(self.curtok.text)
+            self.funcs.add(self.curtok.text)
+            self.next()
+            self.match(Type.LNBRACK)
+            self.emitter.emitn("(")
+            while self.curtok.kind in [Type.float,Type.int]:
+                self.emitter.emitn(self.curtok.text+" ")
+                if not self.curtok.kind in [Type.float,Type.int]:
+                    self.panic(f"Unknown type {self.curtok.text}")
+                else:
+                    self.next()
+                self.emitter.emitn(self.curtok.text)
+                self.match(Type.IDENT)
+                if self.checkcur(Type.COMMA):
+                    self.match(Type.COMMA)
+                    self.emitter.emitn(",")
+                else:
+                    break
+            self.match(Type.RNBRACK)
+            self.match(Type.LBRACK)
+            self.emitter.emit("){")
+            self.nl()
+            while not self.checkcur(Type.RBRACK):
+                self.statement()
+            self.match(Type.RBRACK)
+            self.emitter.emitn("}")
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()

@@ -1,0 +1,4 @@
+func x() {
+    print "hi"
+}
+x()

@@ -9,6 +9,8 @@ class Emitter:
         self.code+=code+"\n"
     def headeremit(self,code):
         self.header+=code+"\n"
+    def hemitn(self,code):
+        self.header+=code
     def write(self):
         with open(self.path, 'w') as file:
             file.write(self.header+self.code)
