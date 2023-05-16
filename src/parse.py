@@ -17,7 +17,7 @@ class Parser:
         self.strings=set()
         self.labels=set()
         self.gotos=set()
-        self.funcs=set()
+        self.funcs=[]
 
         self.curtok = None
         self.peektok = None
@@ -354,11 +354,13 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             self.next()
             self.emitter.emitn(self.curtok.text)
             print(self.curtok.text)
-            self.funcs.add(self.curtok.text)
+            name=self.curtok.text
             self.next()
             self.match(Type.LNBRACK)
             self.emitter.emitn("(")
+            args=0
             while self.curtok.kind in [Type.float,Type.int]:
+                args+=1
                 self.emitter.emitn(self.curtok.text+" ")
                 if not self.curtok.kind in [Type.float,Type.int]:
                     self.panic(f"Unknown type {self.curtok.text}")
@@ -371,6 +373,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                     self.emitter.emitn(",")
                 else:
                     break
+            self.funcs.append({f"{name}":f"{args}"})
             self.match(Type.RNBRACK)
             self.match(Type.LBRACK)
             self.emitter.emit("){")

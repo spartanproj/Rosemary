@@ -1,4 +1,4 @@
-func x() {
+func x(int x) {
     print "hi"
 }
 x()
