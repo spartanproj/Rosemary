@@ -1,16 +1,21 @@
-import sys,os
+import sys,os,datetime
 from lex import *
-log=True
-def log(*args):
-    if log==False:return -1
-    for x in args:
-        print(x)
+logy=True
+LOW=0
+MED=1
+HIGH=2
+def log(filename,line,arg,level=LOW):
+    if logy==False and level==LOW:return -1
+    ms=(datetime.datetime.now().strftime("%f"))[0:4]
+    print(f"{datetime.datetime.now():%Y-%m-%d %H:%M:%S%z}.{ms} @ line {line} @ {filename} - ",end="")
+    print(arg,end="")
+    print()
     return 1
 class Parser:
-    def __init__(self,lexer,emitter,sourcelines):
+    def __init__(self,lexer,emitter,sourcelines,fname):
         self.lexer = lexer
         self.emitter=emitter
-
+        self.fname=fname
         self.sourcelines=sourcelines
         self.floats=set()
         self.ints=set()
@@ -21,7 +26,7 @@ class Parser:
 
         self.curtok = None
         self.peektok = None
-        self.line=1
+        self.line=0
         self.next()
         self.next()
     def checkcur(self,kind):
@@ -42,12 +47,10 @@ class Parser:
             return 1
         return 0
     def funcvals(self,func) -> int:
-        for value in self.funcs:
-            print(value)
-            for key,value in value.items():
-                print(f"{key}:{value}")
+        for value1 in self.funcs:
+            for key,value in value1.items():
                 if key==func:
-                    return int(value)
+                    return [int(value),value1["argtype"]]
         return -1
     def matchn(self,kind):
         if not self.checkcur(kind):
@@ -60,7 +63,8 @@ class Parser:
     def warning(self,msg):
         sys.exit("Warning - "+msg+ " at token "+self.curtok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
     def program(self):
-        log("PROGRAM")
+        log(self.fname,self.line,"PROGRAM")
+        self.line+=1
         self.emitter.headeremit("#include <stdio.h>")
         self.emitter.headeremit("#include <stdint.h>")
         self.emitter.headeremit("#include <stdlib.h>")
@@ -79,7 +83,7 @@ class Parser:
                 self.panic("Attempting to goto to undeclared label: " + label)
     def statement(self):
         if self.checkcur(Type.print):
-            log("print")
+            log(self.fname,self.line,"print")
             self.next()
             if self.checkcur(Type.STRING):
                 self.emitter.emit("printf(\""+self.curtok.text+"\\n\");")
@@ -103,7 +107,7 @@ class Parser:
             else:
                 self.panic("Argument to print is erroneous - "+self.curtok.text)
         elif self.checkcur(Type.IF):
-            log("IF")
+            log(self.fname,self.line,"IF")
             self.next()
             self.emitter.emitn("if(")
             if self.checkpeek(Type.DOUDOL):
@@ -118,7 +122,7 @@ class Parser:
             self.match(Type.RBRACK)
             self.emitter.emit("}")
             while self.checkcur(Type.ELIF):
-                log("elif")
+                log(self.fname,self.line,"elif")
                 self.next()
                 self.emitter.emitn("else if(")
                 if self.checkpeek(Type.DOUDOL):
@@ -133,7 +137,7 @@ class Parser:
                 self.match(Type.RBRACK)
                 self.emitter.emit("}")
             if self.checkcur(Type.ELSE):
-                log("else")
+                log(self.fname,self.line,"else")
                 self.next()
                 self.emitter.emitn("else")
                 self.match(Type.LBRACK)
@@ -147,7 +151,7 @@ class Parser:
             ifse="if" if self.checkcur(Type.ELIF) else "se"
             self.panic(f"El{ifse} without if")
         elif self.checkcur(Type.loop):
-            log("loop")
+            log(self.fname,self.line,"loop")
             self.next()
             self.emitter.emitn("for(iterable=0;iterable<")
             self.expression()
@@ -159,7 +163,7 @@ class Parser:
             self.match(Type.RBRACK)
             self.emitter.emit("}")
         elif self.checkcur(Type.WHILE):
-            log("WHILE")
+            log(self.fname,self.line,"WHILE")
             self.next()
             self.emitter.emitn("while(")
             self.comparison()
@@ -171,7 +175,7 @@ class Parser:
             self.match(Type.RBRACK)
             self.emitter.emit("}")
         elif self.checkcur(Type.label):
-            log("label")
+            log(self.fname,self.line,"label")
             self.next()
             if self.curtok.text in self.labels:
                 self.panic("Label already exists: " + self.curtok.text)
@@ -179,13 +183,13 @@ class Parser:
             self.emitter.emit(self.curtok.text+":")
             self.match(Type.IDENT)
         elif self.checkcur(Type.goto):
-            log("goto")
+            log(self.fname,self.line,"goto")
             self.next()
             self.gotos.add(self.curtok.text)
             self.emitter.emit("goto "+self.curtok.text+";")
             self.match(Type.IDENT)
         elif self.checkcur(Type.float):
-            log("float")
+            log(self.fname,self.line,"float")
             self.next()
             if self.curtok.text not in self.floats:
                 self.floats.add(self.curtok.text)
@@ -196,7 +200,7 @@ class Parser:
             self.expression()
             self.emitter.emit(";")
         elif self.checkcur(Type.int):
-            log("int")
+            log(self.fname,self.line,"int")
             self.next()
             if self.curtok.text not in self.ints:
                 self.ints.add(self.curtok.text)
@@ -212,7 +216,7 @@ class Parser:
             self.expression()
             self.emitter.emit(";")
         elif self.checkcur(Type.ints):
-            log("ints")
+            log(self.fname,self.line,"ints")
             self.next()
             while self.checkcur(Type.IDENT):
                 if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
@@ -226,7 +230,7 @@ class Parser:
                     break
                 self.next()
         elif self.checkcur(Type.floats):
-            log("floats")
+            log(self.fname,self.line,"floats")
             self.next()
             while self.checkcur(Type.IDENT):
                 if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
@@ -240,7 +244,7 @@ class Parser:
                     break
                 self.next()  
         elif self.checkcur(Type.string):
-            log("string")
+            log(self.fname,self.line,"string")
             self.next()
             if self.curtok.text not in self.strings:
                 self.strings.add(self.curtok.text)
@@ -257,7 +261,7 @@ class Parser:
             self.next()
             self.emitter.emit("\";")
         elif self.checkcur(Type.strings):
-            log("strings")
+            log(self.fname,self.line,"strings")
             self.next()
             while self.checkcur(Type.IDENT):
                 if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
@@ -271,42 +275,45 @@ class Parser:
                     break
                 self.next() 
         elif self.checkcur(Type.extern):
-            log("extern")
-            print("""
-WARNING
-C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
+            log(self.fname,self.line,"extern")
+            
             self.next()
             self.matchn(Type.STRING)
-            print(self.curtok.text,"\n\n")
+            log(self.fname,self.line,"C Injection Warning - "+"`"+self.curtok.text+"`",HIGH)
             self.emitter.emit(self.curtok.text)
             self.next()
         elif self.checkcur(Type.IDENT):
-            log("reassign")
+            log(self.fname,self.line,"ident")
             if self.checkpeek(Type.PLUSEQ):
+                log(self.fname,self.line,"pluseq")
                 self.emitter.emitn(self.curtok.text+"+=")
                 self.next()
                 self.match(Type.PLUSEQ)
                 self.expression()
                 self.emitter.emit(";")
             elif self.checkpeek(Type.MINUSEQ):
+                log(self.fname,self.line,"minuseq")
                 self.emitter.emitn(self.curtok.text+"-=")
                 self.next()
                 self.match(Type.MINUSEQ)
                 self.expression()
                 self.emitter.emit(";")
             elif self.checkpeek(Type.ASTEQ):
+                log(self.fname,self.line,"asteq")
                 self.emitter.emitn(self.curtok.text+"*=")
                 self.next()
                 self.match(Type.ASTEQ)
                 self.expression()
                 self.emitter.emit(";")
             elif self.checkpeek(Type.SLASHEQ):
+                log(self.fname,self.line,"slasheq")
                 self.emitter.emitn(self.curtok.text+"/=")
                 self.next()
                 self.match(Type.SLASHEQ)
                 self.expression()
                 self.emitter.emit(";")
             elif self.checkpeek(Type.PLUSPLUS):
+                log(self.fname,self.line,"increment")
                 if self.curtok.text in self.floats or self.curtok.text in self.ints:
                     self.emitter.emitn(self.curtok.text+"++;")
                     self.next()
@@ -314,6 +321,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                 else:
                     self.panic("Attempting to increment non-numeric value - "+self.curtok.text)
             elif self.checkpeek(Type.MINMIN):
+                log(self.fname,self.line,"decrement")
                 if self.curtok.text in self.floats or self.curtok.text in self.ints:
                     self.emitter.emitn(self.curtok.text+"--;")
                     self.next()
@@ -322,24 +330,30 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                     self.panic("Attempting to decrement non-numeric value - "+self.curtok.text)
             
             elif self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+                log(self.fname,self.line,"reassign")
                 self.emitter.emitn(self.curtok.text+"=")
                 self.next()
                 self.match(Type.EQ)
                 self.expression()
                 self.emitter.emit(";")
             elif self.checkpeek(Type.LNBRACK):
+                log(self.fname,self.line,"function call")
                 self.emitter.emit(self.curtok.text+"(")
                 funcname=self.curtok.text
                 self.next()
                 self.next()
-                iterations=range(self.funcvals(funcname))
+                argtypes=self.funcvals(funcname)
+                iterations=range(self.funcvals(funcname)[0])
                 for j in iterations:
-                    if self.curtok.kind==Type.STRING:
-                        self.matchn(Type.STRING)
-                        self.emitter.emitn("\""+self.curtok.text+"\"")
-                    else:
-                        self.matchn(Type.NUMBER)
-                        self.emitter.emitn(" "+self.curtok.text)
+                    matches= {
+                        "int":Type.NUMBER,
+                        "float":Type.NUMBER,
+                        "string":Type.STRING
+                    }
+                    currentargtype=argtypes[1][j]
+                    self.matchn(matches[currentargtype])
+                    filler="" if self.curtok.kind!=Type.STRING else "\""
+                    self.emitter.emitn(filler+self.curtok.text+filler)
                     self.next()
                     if j+1!=len(iterations):
                         self.match(Type.COMMA)
@@ -349,7 +363,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             else:
                 self.panic("Attempting to reassign variable before assignment - "+self.curtok.text)
         elif self.checkcur(Type.input):
-            log("input")
+            log(self.fname,self.line,"input")
             self.next()
             if self.curtok.text not in self.floats and self.curtok.text not in self.ints and self.curtok.text not in self.strings:
                 self.panic("Attempting to input into uninitialised variable "+self.curtok.text)
@@ -375,22 +389,25 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
         elif self.checkcur(Type.inc):
             pass
         elif self.checkcur(Type.func):
-            log("func definition")
+            log(self.fname,self.line,"func definition")
             self.emitter.emitn("int ")
             self.next()
             self.emitter.emitn(self.curtok.text)
-            print(self.curtok.text)
             name=self.curtok.text
             self.next()
             self.match(Type.LNBRACK)
             self.emitter.emitn("(")
-            args=0
+            args,iters=0,0
+            typeslist=[]
             while self.curtok.kind in [Type.float,Type.int,Type.string]:
                 args+=1
                 self.emitter.emitn(self.curtok.text if self.curtok.kind!=Type.string else "char *"+" ")
                 if not self.curtok.kind in [Type.float,Type.int,Type.string]:
                     self.panic(f"Unknown type {self.curtok.text}")
                 else:
+                    typen=self.curtok.text
+                    typeslist+="n" # filler character
+                    typeslist[iters]=typen
                     self.next()
                 self.emitter.emitn(" "+self.curtok.text)
                 self.match(Type.IDENT)
@@ -399,8 +416,8 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                     self.emitter.emitn(",")
                 else:
                     break
-            self.funcs.append({f"{name}":f"{args}"})
-            print(self.funcvals("x"))
+                iters+=1
+            self.funcs.append({f"{name}":f"{args}","argtype":typeslist})
             self.match(Type.RNBRACK)
             self.match(Type.LBRACK)
             self.emitter.emit("){")
@@ -413,7 +430,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()
     def strcmp(self):
-        log("strcmp")
+        log(self.fname,self.line,"strcmp")
         prevtok=self.curtok.text
         self.next()
         self.emitter.emitn("!strcmp(")
@@ -424,7 +441,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
         self.emitter.emit(self.curtok.text+"\")")
         self.next()
     def comparison(self):
-        log("COMPARISON")
+        log(self.fname,self.line,"COMPARISON")
         self.expression()
         if self.isCompOp():
             self.emitter.emitn(self.curtok.text)
@@ -439,7 +456,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
     def isCompOp(self):
         return self.checkcur(Type.GT) or self.checkcur(Type.GTEQ) or self.checkcur(Type.LT) or self.checkcur(Type.LTEQ) or self.checkcur(Type.EQEQ) or self.checkcur(Type.NOTEQ)
     def expression(self):
-        log("EXPRESSION")
+        log(self.fname,self.line,"EXPRESSION")
         self.term()
         while self.checkcur(Type.PLUS) or self.checkcur(Type.MINUS):
             self.emitter.emitn(self.curtok.text)
@@ -447,20 +464,20 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             self.term()
         
     def term(self):
-        log("TERM")
+        log(self.fname,self.line,"TERM")
         self.unary()
         while self.checkcur(Type.ASTERISK) or self.checkcur(Type.FSLASH) or self.checkcur(Type.PERCENT):
             self.emitter.emitn(self.curtok.text)
             self.next()
             self.unary()
     def unary(self):
-        log("UNARY")
+        log(self.fname,self.line,"UNARY")
         if self.checkcur(Type.PLUS) or self.checkcur(Type.MINUS):
             self.emitter.emitn(self.curtok.text)
             self.next()        
         self.primary()
     def primary(self):
-        log("PRIMARY (" + self.curtok.text + ")")
+        log(self.fname,self.line,"PRIMARY (" + self.curtok.text + ")")
         if self.checkcur(Type.NUMBER):
             self.emitter.emitn(self.curtok.text)
             self.next()
