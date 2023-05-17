@@ -6,11 +6,14 @@ MED=1
 HIGH=2
 def log(filename,line,arg,level=LOW):
     if logy==False and level==LOW:return -1
-    ms=(datetime.datetime.now().strftime("%f"))[0:4]
-    print(f"{datetime.datetime.now():%Y-%m-%d %H:%M:%S%z}.{ms} @ line {line} @ {filename} - ",end="")
+    time=datetime.datetime.now()
+    ms=datetime.datetime.now()
+    x=time.strftime(r"%Y-%m-%d %H:%M:%S%z")
+    realms=ms.strftime("%f")[0:4]
+    print(f"{x}.{realms} @ line {line} @ {filename} - ",end="")
     print(arg,end="")
     print()
-    return 1
+    return datetime.datetime.timestamp(time)
 class Parser:
     def __init__(self,lexer,emitter,sourcelines,fname):
         self.lexer = lexer

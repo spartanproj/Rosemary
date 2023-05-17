@@ -1,4 +1,6 @@
 func x(int x,string y) {
     extern "printf('%d,%s',x,y);"
 }
-x(42,"hi")
+loop 5 {
+    x(42,"hi\n")
+}
