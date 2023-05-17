@@ -37,6 +37,10 @@ class Parser:
             self.next()
             return 1
         return 0
+    def matchoptn(self,kind):
+        if self.checkcur(kind):
+            return 1
+        return 0
     def funcvals(self,func) -> int:
         for value in self.funcs:
             print(value)
@@ -328,10 +332,18 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                 funcname=self.curtok.text
                 self.next()
                 self.next()
-                for j in range(self.funcvals(funcname)):
-                    self.matchn(Type.NUMBER)
-                    self.emitter.emitn(self.curtok.text)
+                iterations=range(self.funcvals(funcname))
+                for j in iterations:
+                    if self.curtok.kind==Type.STRING:
+                        self.matchn(Type.STRING)
+                        self.emitter.emitn("\""+self.curtok.text+"\"")
+                    else:
+                        self.matchn(Type.NUMBER)
+                        self.emitter.emitn(" "+self.curtok.text)
                     self.next()
+                    if j+1!=len(iterations):
+                        self.match(Type.COMMA)
+                        self.emitter.emitn(",")
                 self.emitter.emit(");")
                 self.match(Type.RNBRACK)
             else:
@@ -373,14 +385,14 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
             self.match(Type.LNBRACK)
             self.emitter.emitn("(")
             args=0
-            while self.curtok.kind in [Type.float,Type.int]:
+            while self.curtok.kind in [Type.float,Type.int,Type.string]:
                 args+=1
-                self.emitter.emitn(self.curtok.text+" ")
-                if not self.curtok.kind in [Type.float,Type.int]:
+                self.emitter.emitn(self.curtok.text if self.curtok.kind!=Type.string else "char *"+" ")
+                if not self.curtok.kind in [Type.float,Type.int,Type.string]:
                     self.panic(f"Unknown type {self.curtok.text}")
                 else:
                     self.next()
-                self.emitter.emitn(self.curtok.text)
+                self.emitter.emitn(" "+self.curtok.text)
                 self.match(Type.IDENT)
                 if self.checkcur(Type.COMMA):
                     self.match(Type.COMMA)

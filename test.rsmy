@@ -1,4 +1,4 @@
-func x(int x) {
-    extern "printf('%d',x);"
+func x(string x,string y) {
+    extern "printf('%s;%s',x,y);"
 }
-x(4)
+x("hi","hi")
