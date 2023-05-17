@@ -37,6 +37,14 @@ class Parser:
             self.next()
             return 1
         return 0
+    def funcvals(self,func) -> int:
+        for value in self.funcs:
+            print(value)
+            for key,value in value.items():
+                print(f"{key}:{value}")
+                if key==func:
+                    return int(value)
+        return -1
     def matchn(self,kind):
         if not self.checkcur(kind):
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
@@ -316,9 +324,15 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                 self.expression()
                 self.emitter.emit(";")
             elif self.checkpeek(Type.LNBRACK):
-                self.emitter.emit(self.curtok.text+"();")
+                self.emitter.emit(self.curtok.text+"(")
+                funcname=self.curtok.text
                 self.next()
                 self.next()
+                for j in range(self.funcvals(funcname)):
+                    self.matchn(Type.NUMBER)
+                    self.emitter.emitn(self.curtok.text)
+                    self.next()
+                self.emitter.emit(");")
                 self.match(Type.RNBRACK)
             else:
                 self.panic("Attempting to reassign variable before assignment - "+self.curtok.text)
@@ -374,6 +388,7 @@ C CODE IS BEING INJECTED INTO YOUR PROGRAM""")
                 else:
                     break
             self.funcs.append({f"{name}":f"{args}"})
+            print(self.funcvals("x"))
             self.match(Type.RNBRACK)
             self.match(Type.LBRACK)
             self.emitter.emit("){")

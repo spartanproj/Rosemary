@@ -157,7 +157,7 @@ class Lexer:
                 self.next()
                 start=self.pos
                 while self.cur!="\"":
-                    if self.cur in ["\r","\t","%"]:
+                    if self.cur in ["\r","\t"]:
                         self.panic("Illegal character in string literal "+self.cur)
                     self.next()
 

@@ -1,4 +1,4 @@
 func x(int x) {
-    print "hi"
+    extern "printf('%d',x);"
 }
-x()
+x(4)
