@@ -216,6 +216,36 @@ if x=="hi":
 
 </td>
 </tr>
+<tr>
+<td>
+
+```py
+func x(int xz,int yz) {
+    int result=xz*yz
+    print result
+}
+```
+</td>
+<td>
+
+```c
+void x(int xz, int yz) {
+    int result=xz*yz;
+    printf("%d",result);
+}
+```
+
+</td>
+<td>
+
+```py
+def x(xz: int,yz: int):
+    result=xz*yz
+    print(result)
+```
+
+</td>
+</tr>
 </table>
 
 ### Types: The list
