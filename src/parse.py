@@ -89,14 +89,14 @@ class Parser:
             log(self.fname,self.line,"print")
             self.next()
             if self.checkcur(Type.STRING):
-                self.emitter.emit("printf(\""+self.curtok.text+"\\n\");")
+                self.emitter.emit("printf(\""+self.curtok.text+"\");")
                 self.next()
             elif self.curtok.text in self.floats:
-                self.emitter.emitn("printf(\"%" + "f\\n\", (float)(")
+                self.emitter.emitn("printf(\"%" + "f\", (float)(")
                 self.expression()
                 self.emitter.emit("));")
             elif self.curtok.text in self.ints:
-                self.emitter.emitn("printf(\"%" + "d\\n\",")
+                self.emitter.emitn("printf(\"%" + "d\",")
                 self.expression()
                 self.emitter.emit(");")
             elif self.curtok.text in self.strings:
@@ -105,7 +105,7 @@ class Parser:
                 self.emitter.emit(");")
                 self.next()
             elif self.checkcur(Type.NUMBER):
-                self.emitter.emit("printf(\"%d\",\""+self.curtok.text+"\"\\n\");")
+                self.emitter.emit("printf(\"%d\",\""+self.curtok.text+"\"\");")
                 self.next()
             else:
                 self.panic("Argument to print is erroneous - "+self.curtok.text)
@@ -402,6 +402,13 @@ class Parser:
             self.emitter.emitn("(")
             args,iters=0,0
             typeslist=[]
+            typen=""
+            matchto= {
+                    "int":self.ints,
+                    "float":self.floats,
+                    "string":self.strings
+                }
+            argstofunc=[]
             while self.curtok.kind in [Type.float,Type.int,Type.string]:
                 args+=1
                 self.emitter.emitn(self.curtok.text if self.curtok.kind!=Type.string else "char *"+" ")
@@ -413,7 +420,10 @@ class Parser:
                     typeslist[iters]=typen
                     self.next()
                 self.emitter.emitn(" "+self.curtok.text)
-                self.match(Type.IDENT)
+                self.matchn(Type.IDENT)
+                argstofunc.append({self.curtok.text:typen})
+                matchto[typen].add(self.curtok.text)
+                self.next()
                 if self.checkcur(Type.COMMA):
                     self.match(Type.COMMA)
                     self.emitter.emitn(",")
@@ -427,6 +437,9 @@ class Parser:
             self.nl()
             while not self.checkcur(Type.RBRACK):
                 self.statement()
+            for k in argstofunc:
+                for varname,typen in k.items():
+                    matchto[typen].remove(varname)
             self.match(Type.RBRACK)
             self.emitter.emitn("}")
         else:

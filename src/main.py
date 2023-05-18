@@ -17,4 +17,4 @@ parser = Parser(lexer,emitter,sourcelines,sys.argv[1])
 parser.program() # Start the parser.
 emitter.write()
 end=log(myname,parser.line,"Compiling completed.",HIGH)
-log(myname,parser.line,f"Time taken: {end-start} seconds")
+log(myname,parser.line,f"Time taken: ~{round(end-start,5)} seconds")

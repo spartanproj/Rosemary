@@ -1,6 +1,10 @@
-func x(int x,string y) {
-    extern "printf('%d,%s',x,y);"
+int y=0
+func x(int xz,float yz) {
+    floats result
+    result=xz*yz
+    print result
+    print "\n"
 }
 loop 5 {
-    x(42,"hi\n")
+    x(42,3.14)
 }
