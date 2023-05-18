@@ -13,6 +13,7 @@ with open('index.html', 'w') as f:
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rosemary</title>
     <link rel="stylesheet" href="static/css/codehilite.css"/>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <style>
     body {
