@@ -190,7 +190,7 @@ print(x);
 ```c
 strings x
 input x
-if x$$"hi" {
+if "hi"==x { # note yoda notation
     print "Hello"
 }
 ```

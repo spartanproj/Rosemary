@@ -79,11 +79,14 @@ class Parser:
             self.next()
         while not self.checkcur(Type.EOF):
             self.statement()
+        for string in self.strings:
+            self.emitter.emit(f"free({string});")
         self.emitter.emit("return 0;")
         self.emitter.emit("}");
         for label in self.gotos:
             if label not in self.labels:
                 self.panic("Attempting to goto to undeclared label: " + label)
+        
     def statement(self):
         if self.checkcur(Type.print):
             log(self.fname,self.line,"print")
