@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosemary</title>
+    <link rel="stylesheet" href="static/css/codehilite.css"/>
+</head>
+<style>
+    body {
+        background:black;
+        color:white;
+        font-family:monospace
+    }
+    .codehilite {
+        border-radius:7px
+    }
+    code:not(pre *){
+        background:white;
+        border-radius:3px;
+        color:black
+    }
+</style>
+<body>
+</body>
+</html><h1>Rosemary</h1>
+<h2>A blend of Python and C. Transpiled to C</h2>
+<ul>
+<li>Check out <a href="examples/">/examples</a> for more use cases!</li>
+</ul>
+<h2>Why use Rosemary?</h2>
+<h3>Ease of use</h3>
+<ul>
+<li>You can write short, efficient code</li>
+<li>Easy for both Python/Ruby or C/Java programmers to approach</li>
+</ul>
+<h3>Speed</h3>
+<ul>
+<li>It runs very fast (Takes &lt;50 ms to compile to C)</li>
+<li>The program below, for example takes 13ms to compile.
+For example, a basic program:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code><span class="n">ints</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span>
+<span class="k">while</span> <span class="n">a</span><span class="o">&lt;</span><span class="mi">1</span> <span class="p">{</span>
+    <span class="n">print</span> <span class="s">&quot;Enter number of scores: &quot;</span>
+    <span class="n">input</span> <span class="n">a</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="n">a</span><span class="o">&lt;=</span><span class="mi">2</span> <span class="p">{</span>
+    <span class="n">print</span> <span class="s">&quot;a is 2&quot;</span>
+<span class="p">}</span>
+<span class="n">floats</span> <span class="n">s</span>
+<span class="n">print</span> <span class="s">&quot;Enter one value at a time: &quot;</span>
+<span class="k">while</span> <span class="n">b</span><span class="o">&lt;</span><span class="n">a</span> <span class="p">{</span>
+    <span class="n">input</span> <span class="n">c</span>
+    <span class="n">s</span><span class="o">+=</span><span class="n">c</span>
+    <span class="n">b</span><span class="o">++</span>
+<span class="p">}</span>
+<span class="n">print</span> <span class="s">&quot;Mean: &quot;</span>
+<span class="n">print</span> <span class="n">s</span><span class="o">/</span><span class="n">a</span>
+</code></pre></div>
+
+<h3>Code insertion</h3>
+<ul>
+<li>You can insert C directly into your program!</li>
+</ul>
+<h3>Syntax</h3>
+<table>
+<tr>
+<td> 
+
+## Rosemary </td> <td> 
+## C </td> <td> 
+## Python </td>
+</tr>
+<tr>
+<td> 
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">if</span> <span class="n">x</span><span class="o">&gt;=</span><span class="mi">1</span> <span class="p">{</span>
+    <span class="n">print</span> <span class="s">&quot;hi&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">if</span> <span class="n">x</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hi&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+</td>
+
+
+<tr>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">float</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">2</span> <span class="p">{</span>
+    <span class="n">input</span> <span class="n">a</span>
+    <span class="n">print</span> <span class="n">a</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">float</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">while</span> <span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%f&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">a</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">while</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+</td>
+</tr>
+<tr>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">loop</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">print</span><span class="w"> </span><span class="s">&quot;hi&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">x</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">;</span><span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hi&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hi&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+</td>
+</tr>
+<tr>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span>
+<span class="k">extern</span> <span class="s">&quot;x=3;&quot;</span>
+<span class="n">print</span> <span class="n">x</span>
+</code></pre></div>
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="c1"># This is hard.</span>
+<span class="c1"># also not built in without os.system :)</span>
+</code></pre></div>
+
+
+
+</td>
+</tr>
+<tr>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">x</span><span class="o">+=</span><span class="mi">1</span>
+<span class="n">print</span> <span class="n">x</span>
+</code></pre></div>
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">int</span> <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">x</span><span class="o">+=</span><span class="mi">1</span><span class="p">;</span>
+<span class="n">print</span> <span class="n">x</span><span class="p">;</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">x</span><span class="o">+=</span><span class="mi">1</span><span class="p">;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+</code></pre></div>
+
+
+
+</td>
+</tr>
+<tr>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="n">strings</span> <span class="n">x</span>
+<span class="n">input</span> <span class="n">x</span>
+<span class="k">if</span> <span class="s">&quot;hi&quot;</span><span class="o">==</span><span class="n">x</span> <span class="p">{</span> <span class="err">#</span> <span class="n">note</span> <span class="n">yoda</span> <span class="n">notation</span>
+    <span class="n">print</span> <span class="s">&quot;Hello&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span> <span class="o">*</span> <span class="n">f</span><span class="o">=</span><span class="n">malloc</span><span class="p">(</span><span class="mi">8192</span><span class="p">);</span>
+<span class="n">scanf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="s">&quot;gh&quot;</span><span class="p">)){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="n">x</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
+<span class="k">if</span> <span class="n">x</span><span class="o">==</span><span class="s2">&quot;hi&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+</td>
+</tr>
+<tr>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="n">func</span> <span class="n">x</span><span class="p">(</span><span class="nb">int</span> <span class="n">xz</span><span class="p">,</span><span class="nb">int</span> <span class="n">yz</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">int</span> <span class="n">result</span><span class="o">=</span><span class="n">xz</span><span class="o">*</span><span class="n">yz</span>
+    <span class="nb">print</span> <span class="n">result</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span> <span class="nf">x</span><span class="p">(</span><span class="kt">int</span> <span class="n">xz</span><span class="p">,</span> <span class="kt">int</span> <span class="n">yz</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">result</span><span class="o">=</span><span class="n">xz</span><span class="o">*</span><span class="n">yz</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d&quot;</span><span class="p">,</span><span class="n">result</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+</td>
+<td>
+
+
+<div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="n">xz</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span><span class="n">yz</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">result</span><span class="o">=</span><span class="n">xz</span><span class="o">*</span><span class="n">yz</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+</td>
+</tr>
+</table>
+
+<h3>Types: The list</h3>
+<h4>Float</h4>
+<ul>
+<li>Floating point decimal number</li>
+<li>Equivalent to C's <code>float</code></li>
+</ul>
+<h4>Int</h4>
+<ul>
+<li>Integer</li>
+<li>Equivalent to <code>&lt;stdint.h&gt;</code>'s <code>int64_t</code></li>
+</ul>
+<h4>String</h4>
+<ul>
+<li>String</li>
+<li>Equivalent to C's <code>char *</code></li>
+<li>No segfaults (you hope)</li>
+</ul>
+<h3>Website</h3>
+<ul>
+<li>Is autogenerated from markdown with md.py</li>
+<li>No cmd line arguments needed</li>
+<li>Will write to web/index.html</li>
+<li>Also uses python <code>markdown</code> extension</li>
+</ul>
