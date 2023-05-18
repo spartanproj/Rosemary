@@ -113,7 +113,7 @@ class Parser:
             log(self.fname,self.line,"IF")
             self.next()
             self.emitter.emitn("if(")
-            if self.checkpeek(Type.DOUDOL):
+            if self.checkpeek(Type.EQEQ) and self.checkcur(Type.STRING):
                 self.strcmp()
             else:
                 self.comparison()
@@ -128,7 +128,7 @@ class Parser:
                 log(self.fname,self.line,"elif")
                 self.next()
                 self.emitter.emitn("else if(")
-                if self.checkpeek(Type.DOUDOL):
+                if self.checkpeekself.checkpeek(Type.eqeq) and self.checkcur(Type.STRING):
                     self.strcmp()
                 else:
                     self.comparison()
@@ -346,7 +346,10 @@ class Parser:
                 self.next()
                 self.next()
                 argtypes=self.funcvals(funcname)
-                iterations=range(self.funcvals(funcname)[0])
+                try:
+                    iterations=range(self.funcvals(funcname)[0])
+                except TypeError:
+                    iterations=range(self.funcvals(funcname))
                 for j in iterations:
                     matches= {
                         "int":Type.NUMBER,
@@ -449,12 +452,12 @@ class Parser:
         log(self.fname,self.line,"strcmp")
         prevtok=self.curtok.text
         self.next()
-        self.emitter.emitn("!strcmp(")
-        self.emitter.emitn(prevtok)
-        self.match(Type.DOUDOL)
-        self.emitter.emitn(",\"")
-        self.matchn(Type.STRING)
-        self.emitter.emit(self.curtok.text+"\")")
+        self.emitter.emitn("!strcmp(\"")
+        self.emitter.emit(prevtok+"\"")
+        self.emitter.emitn(",")
+        self.match(Type.EQEQ)
+        self.matchn(Type.IDENT)
+        self.emitter.emitn(self.curtok.text+")")
         self.next()
     def comparison(self):
         log(self.fname,self.line,"COMPARISON")

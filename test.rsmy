@@ -1,10 +1,6 @@
-int y=0
-func x(int xz,float yz) {
-    floats result
-    result=xz*yz
-    print result
-    print "\n"
-}
-loop 5 {
-    x(42,3.14)
+string hello="h"
+if "hi"==hello {
+    print "hillo!"
+} else {
+    print "hello :("
 }
