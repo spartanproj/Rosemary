@@ -1,4 +1,5 @@
-string hello="h"
+strings hello
+input hello
 if "hi"==hello {
     print "hillo!"
 } else {

@@ -453,7 +453,7 @@ class Parser:
         prevtok=self.curtok.text
         self.next()
         self.emitter.emitn("!strcmp(\"")
-        self.emitter.emit(prevtok+"\"")
+        self.emitter.emitn(prevtok+"\"")
         self.emitter.emitn(",")
         self.match(Type.EQEQ)
         self.matchn(Type.IDENT)
