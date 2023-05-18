@@ -14,7 +14,7 @@ with open('index.html', 'w') as f:
     <title>Rosemary</title>
     <link rel="stylesheet" href="static/css/codehilite.css"/>
     <link rel="icon" type="image/x-icon" href="favicon.png">
-</head>
+</head> 
 <style>
     body {
         background:black;
