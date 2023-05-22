@@ -1,11 +1,23 @@
 import sys,os,datetime
 from lex import *
-logy=True
 LOW=0
 MED=1
 HIGH=2
+NONE=3
+maxlogy=NONE
+if "-00" in sys.argv:
+    maxlogy=NONE
+elif "-01" in sys.argv:
+    maxlogy=HIGH
+elif "-02" in sys.argv:
+    maxlogy=MED
+else:
+    maxlogy=LOW
 def log(filename,line,arg,level=LOW):
-    if logy==False and level==LOW:return -1
+    if maxlogy==LOW and level==LOW:return -1
+    if maxlogy==MED and level<MED:return -1
+    if maxlogy==HIGH and level<HIGH:return -1
+    if maxlogy==3:return -1
     time=datetime.datetime.now()
     ms=datetime.datetime.now()
     x=time.strftime(r"%Y-%m-%d %H:%M:%S%z")
@@ -34,7 +46,7 @@ class Parser:
         self.next()
     def functioncall(self):
         log(self.fname,self.line,"function call")
-        self.emitter.emit(self.curtok.text+"(")
+        self.emitter.emitn(self.curtok.text+"(")
         funcname=self.curtok.text
         self.next()
         self.next()
@@ -50,7 +62,13 @@ class Parser:
                 "string":Type.STRING
             }
             currentargtype=argtypes[1][j]
-            self.matchn(matches[currentargtype])
+            match matches[currentargtype]:
+                case Type.NUMBER:
+                    if self.curtok.kind!=Type.NUMBER and self.curtok.text not in self.ints|self.floats:
+                        self.panic("Wrong arg type")
+                case Type.STRING:
+                    if self.curtok.kind!=Type.STRING and self.curtok.text not in self.strings:
+                        self.panic("Wrong arg type")
             filler="" if self.curtok.kind!=Type.STRING else "\""
             self.emitter.emitn(filler+self.curtok.text+filler)
             self.next()
@@ -76,7 +94,7 @@ class Parser:
         if self.checkcur(kind):
             return 1
         return 0
-    def funcvals(self,func) -> int:
+    def funcvals(self,func):
         for value1 in self.funcs:
             for key,value in value1.items():
                 if key==func:
@@ -128,35 +146,57 @@ class Parser:
             log(self.fname,self.line,"print")
             self.next()
             funcs=[]
+            purelist=[]
             for value in self.funcs:
                 for key,val in value.items():
                     if isinstance(val,list) or key=="ret":
                         pass
                     else:
                         funcs.append({key:(value["ret"])})
-            for key,val in funcs.items():
-                pass
+                        purelist.append(key)
+            failed=True
+            for x in funcs:
+                for key,val in x.items():
+                    if key in purelist:
+                        
+                        match val:
+                            
+                            case "int":
+                                self.emitter.emitn(f"printf(\"%" + "d\",")
+                            case "float":
+                                self.emitter.emitn(f"printf(\"%" + ".2f\",")
+                            case "string":
+                                self.emitter.emitn(f"printf(\"%" + "s\",")
+                    self.functioncall()
+                    self.emitter.antiemit(1)
+                    self.emitter.emit(");")
+                    failed=False
             if self.checkcur(Type.STRING):
                 self.emitter.emit("printf(\""+self.curtok.text+"\");")
                 self.next()
+                failed=False
             elif self.curtok.text in self.floats:
                 self.emitter.emitn("printf(\"%" + "f\", (float)(")
                 self.expression()
                 self.emitter.emit("));")
+                failed=False
             elif self.curtok.text in self.ints:
                 self.emitter.emitn("printf(\"%" + "d\",")
                 self.expression()
                 self.emitter.emit(");")
+                failed=False
             elif self.curtok.text in self.strings:
                 self.emitter.emitn("printf(")
                 self.emitter.emitn(self.curtok.text)
                 self.emitter.emit(");")
                 self.next()
+                failed=False
             elif self.checkcur(Type.NUMBER):
                 self.emitter.emit("printf(\"%d\",\""+self.curtok.text+"\"\");")
                 self.next()
             else:
-                self.panic("Argument to print is erroneous - "+self.curtok.text)
+                if failed==True:
+                    self.panic("Argument to print is erroneous - "+self.curtok.text)
         elif self.checkcur(Type.IF):
             log(self.fname,self.line,"IF")
             self.next()
@@ -176,7 +216,7 @@ class Parser:
                 log(self.fname,self.line,"elif")
                 self.next()
                 self.emitter.emitn("else if(")
-                if self.checkpeekself.checkpeek(Type.eqeq) and self.checkcur(Type.STRING):
+                if self.checkpeek(Type.eqeq) and self.checkcur(Type.STRING):
                     self.strcmp()
                 else:
                     self.comparison()
@@ -326,7 +366,7 @@ class Parser:
                     break
                 self.next() 
         elif self.checkcur(Type.extern):
-            log(self.fname,self.line,"extern")
+            log(self.fname,self.line,"extern",MED)
             
             self.next()
             self.matchn(Type.STRING)
@@ -425,7 +465,7 @@ class Parser:
             name=self.curtok.text
             self.next()
             self.match(Type.LNBRACK)
-            temp+=("(")
+            temp+="("
             args,iters=0,0
             typeslist=[]
             typen=""
@@ -467,7 +507,7 @@ class Parser:
                 type=self.curtok.kind
                 typetext=self.curtok.text
                 self.emitter.emitn(self.curtok.text)
-                self.emitter.emit(temp)
+                self.emitter.emitn(temp)
                 self.next()
             self.funcs.append({f"{name}":f"{args}","argtype":typeslist,"ret":typetext})
             self.match(Type.LBRACK)
@@ -475,6 +515,7 @@ class Parser:
             self.nl()
             while not self.checkcur(Type.ret):
                 self.statement()
+                self.emitter.emit("")
             self.match(Type.ret)
             log(self.fname,self.line,"return")
             self.emitter.emitn("return ")
@@ -497,7 +538,7 @@ class Parser:
                     matchto[typen].remove(varname)
             self.nl()
             self.match(Type.RBRACK)
-            self.emitter.emitn("}")
+            self.emitter.emit("}")
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()

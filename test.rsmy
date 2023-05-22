@@ -1,4 +1,5 @@
 func x(int y) -> int {
-    ret 3
+    ret y
 }
-print x(3)
+int o=9
+print x(o)

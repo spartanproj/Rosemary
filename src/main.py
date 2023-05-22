@@ -3,9 +3,9 @@ from parse import *
 from emit import *
 myname=__file__.split("/")
 myname=myname[len(myname)-1]
-
-if len(sys.argv) != 3:
+if len(sys.argv) < 3:
     sys.exit("Error: Compiler needs source file as argument.")
+
 with open(sys.argv[1], 'r') as inputFile:
     source = inputFile.read()
 # Initialize the lexer and parser.

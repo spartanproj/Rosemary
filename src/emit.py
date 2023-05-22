@@ -5,6 +5,8 @@ class Emitter:
         self.code=""
     def emitn(self,code):
         self.code+=code
+    def antiemit(self,code):
+        self.code=self.code[0:(len(self.code)-1-code)]
     def emit(self,code):
         self.code+=code+"\n"
     def headeremit(self,code):
