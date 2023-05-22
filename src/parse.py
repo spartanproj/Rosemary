@@ -616,4 +616,3 @@ class Parser:
         while self.checkcur(Type.NEWLINE):
             self.next()
             self.line+=1
-        
