@@ -162,7 +162,7 @@ class Parser:
                         match val:
                             
                             case "int":
-                                self.emitter.emitn(f"printf(\"%" + "ld\",")
+                                self.emitter.emitn(f"printf(\"%" + "d\",")
                             case "float":
                                 self.emitter.emitn(f"printf(\"%" + ".2f\",")
                             case "string":

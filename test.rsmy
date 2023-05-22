@@ -1,2 +1,7 @@
-int y=0
-print y
+ints uinput
+input uinput
+func y(int z) -> int {
+    int result=z*10
+    ret result
+}
+print y(uinput)
