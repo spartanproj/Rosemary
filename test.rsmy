@@ -1,5 +1,7 @@
-func x(int y) -> int {
-    ret y
+func x(float y) -> float {
+    floats result
+    result=y/10
+    ret result
 }
-int o=9
+float o=9
 print x(o)
