@@ -47,6 +47,9 @@ class Lexer:
                 elif self.peek()=="-":
                     token=Token(self.source[self.pos:self.pos+1],Type.MINMIN)
                     self.next()
+                elif self.peek()==">":
+                    token=Token(self.source[self.pos:self.pos+1],Type.ARROW)
+                    self.next()
                 else:
                     token=Token(self.cur,Type.MINUS)
             case "*":
@@ -241,6 +244,7 @@ class Type(enum.Enum):
         strings=119
         extern=120
         func=121
+        ret=122
         EQ = 201  
         PLUS = 202
         MINUS = 203
@@ -266,3 +270,4 @@ class Type(enum.Enum):
         POUND=223
         LNBRACK=224 #(
         RNBRACK=225 #)
+        ARROW=226

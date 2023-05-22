@@ -1,7 +1,4 @@
-strings hello
-input hello
-if "hi"==hello {
-    print "hillo!"
-} else {
-    print "hello :("
+func x(int y) -> int {
+    ret 3
 }
+print x(3)

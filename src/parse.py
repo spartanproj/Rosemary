@@ -32,6 +32,33 @@ class Parser:
         self.line=0
         self.next()
         self.next()
+    def functioncall(self):
+        log(self.fname,self.line,"function call")
+        self.emitter.emit(self.curtok.text+"(")
+        funcname=self.curtok.text
+        self.next()
+        self.next()
+        argtypes=self.funcvals(funcname)
+        try:
+            iterations=range(self.funcvals(funcname)[0])
+        except TypeError:
+            iterations=range(self.funcvals(funcname))
+        for j in iterations:
+            matches= {
+                "int":Type.NUMBER,
+                "float":Type.NUMBER,
+                "string":Type.STRING
+            }
+            currentargtype=argtypes[1][j]
+            self.matchn(matches[currentargtype])
+            filler="" if self.curtok.kind!=Type.STRING else "\""
+            self.emitter.emitn(filler+self.curtok.text+filler)
+            self.next()
+            if j+1!=len(iterations):
+                self.match(Type.COMMA)
+                self.emitter.emitn(",")
+        self.emitter.emit(");")
+        self.match(Type.RNBRACK)
     def checkcur(self,kind):
         return kind==self.curtok.kind
     def checkpeek(self,kind):
@@ -100,6 +127,15 @@ class Parser:
         if self.checkcur(Type.print):
             log(self.fname,self.line,"print")
             self.next()
+            funcs=[]
+            for value in self.funcs:
+                for key,val in value.items():
+                    if isinstance(val,list) or key=="ret":
+                        pass
+                    else:
+                        funcs.append({key:(value["ret"])})
+            for key,val in funcs.items():
+                pass
             if self.checkcur(Type.STRING):
                 self.emitter.emit("printf(\""+self.curtok.text+"\");")
                 self.next()
@@ -352,32 +388,7 @@ class Parser:
                 self.expression()
                 self.emitter.emit(";")
             elif self.checkpeek(Type.LNBRACK):
-                log(self.fname,self.line,"function call")
-                self.emitter.emit(self.curtok.text+"(")
-                funcname=self.curtok.text
-                self.next()
-                self.next()
-                argtypes=self.funcvals(funcname)
-                try:
-                    iterations=range(self.funcvals(funcname)[0])
-                except TypeError:
-                    iterations=range(self.funcvals(funcname))
-                for j in iterations:
-                    matches= {
-                        "int":Type.NUMBER,
-                        "float":Type.NUMBER,
-                        "string":Type.STRING
-                    }
-                    currentargtype=argtypes[1][j]
-                    self.matchn(matches[currentargtype])
-                    filler="" if self.curtok.kind!=Type.STRING else "\""
-                    self.emitter.emitn(filler+self.curtok.text+filler)
-                    self.next()
-                    if j+1!=len(iterations):
-                        self.match(Type.COMMA)
-                        self.emitter.emitn(",")
-                self.emitter.emit(");")
-                self.match(Type.RNBRACK)
+                self.functioncall()
             else:
                 self.panic("Attempting to reassign variable before assignment - "+self.curtok.text)
         elif self.checkcur(Type.input):
@@ -408,13 +419,13 @@ class Parser:
             pass
         elif self.checkcur(Type.func):
             log(self.fname,self.line,"func definition")
-            self.emitter.emitn("int ")
+            temp=""
             self.next()
-            self.emitter.emitn(self.curtok.text)
+            temp+=" "+(self.curtok.text)
             name=self.curtok.text
             self.next()
             self.match(Type.LNBRACK)
-            self.emitter.emitn("(")
+            temp+=("(")
             args,iters=0,0
             typeslist=[]
             typen=""
@@ -424,9 +435,11 @@ class Parser:
                     "string":self.strings
                 }
             argstofunc=[]
+            
+            
             while self.curtok.kind in [Type.float,Type.int,Type.string]:
                 args+=1
-                self.emitter.emitn(self.curtok.text if self.curtok.kind!=Type.string else "char *"+" ")
+                temp+=(self.curtok.text if self.curtok.kind!=Type.string else "char *"+" ")
                 if not self.curtok.kind in [Type.float,Type.int,Type.string]:
                     self.panic(f"Unknown type {self.curtok.text}")
                 else:
@@ -434,27 +447,55 @@ class Parser:
                     typeslist+="n" # filler character
                     typeslist[iters]=typen
                     self.next()
-                self.emitter.emitn(" "+self.curtok.text)
+                temp+=(" "+self.curtok.text)
                 self.matchn(Type.IDENT)
                 argstofunc.append({self.curtok.text:typen})
                 matchto[typen].add(self.curtok.text)
                 self.next()
                 if self.checkcur(Type.COMMA):
                     self.match(Type.COMMA)
-                    self.emitter.emitn(",")
+                    temp+=(",")
                 else:
                     break
                 iters+=1
-            self.funcs.append({f"{name}":f"{args}","argtype":typeslist})
+            
             self.match(Type.RNBRACK)
+            self.match(Type.ARROW)
+            if self.curtok.kind not in [Type.int, Type.float, Type.string]:
+                self.panic(f"Wrong return type {self.curtok.text}")
+            else: 
+                type=self.curtok.kind
+                typetext=self.curtok.text
+                self.emitter.emitn(self.curtok.text)
+                self.emitter.emit(temp)
+                self.next()
+            self.funcs.append({f"{name}":f"{args}","argtype":typeslist,"ret":typetext})
             self.match(Type.LBRACK)
             self.emitter.emit("){")
             self.nl()
-            while not self.checkcur(Type.RBRACK):
+            while not self.checkcur(Type.ret):
                 self.statement()
+            self.match(Type.ret)
+            log(self.fname,self.line,"return")
+            self.emitter.emitn("return ")
+            match type:
+                case Type.string:
+                    if self.curtok.kind not in [Type.STRING, Type.IDENT]:
+                        self.panic(f"Wrong return type")
+                case Type.int:
+                    if self.curtok.kind not in [Type.NUMBER, Type.IDENT]:
+                        self.panic(f"Wrong return type")
+                case Type.float:
+                    if self.curtok.kind not in [Type.NUMBER, Type.IDENT]:
+                        self.panic(f"Wrong return type")
+                case _:
+                    self.panic("Not quite sure how we ended up here. Um maybe file a Github issue?")
+            self.emitter.emit(self.curtok.text+";")
+            self.next()
             for k in argstofunc:
                 for varname,typen in k.items():
                     matchto[typen].remove(varname)
+            self.nl()
             self.match(Type.RBRACK)
             self.emitter.emitn("}")
         else:
@@ -518,10 +559,14 @@ class Parser:
         elif self.checkcur(Type.IDENT):
             if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
                 pass
+                self.emitter.emitn(self.curtok.text)
+                self.next()
+            elif self.curtok.text in self.funcs:
+                self.functioncall()
             else:
                 self.panic("Referencing variable before assignment: " + self.curtok.text)
-            self.emitter.emitn(self.curtok.text)
-            self.next()
+            
+            
         else:
             self.panic("Unexpected token at "+self.curtok.text)
     def nl(self):
