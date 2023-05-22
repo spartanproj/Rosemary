@@ -162,7 +162,7 @@ class Parser:
                         match val:
                             
                             case "int":
-                                self.emitter.emitn(f"printf(\"%" + "d\",")
+                                self.emitter.emitn(f"printf(\"%" + "ld\",")
                             case "float":
                                 self.emitter.emitn(f"printf(\"%" + ".2f\",")
                             case "string":
@@ -181,7 +181,7 @@ class Parser:
                 self.emitter.emit("));")
                 failed=False
             elif self.curtok.text in self.ints:
-                self.emitter.emitn("printf(\"%" + "d\",")
+                self.emitter.emitn("printf(\"%" + "ld\",")
                 self.expression()
                 self.emitter.emit(");")
                 failed=False
@@ -192,7 +192,7 @@ class Parser:
                 self.next()
                 failed=False
             elif self.checkcur(Type.NUMBER):
-                self.emitter.emit("printf(\"%d\",\""+self.curtok.text+"\"\");")
+                self.emitter.emit("printf(\"%ld\",\""+self.curtok.text+"\"\");")
                 self.next()
             else:
                 if failed==True:
@@ -443,7 +443,7 @@ class Parser:
                 self.emitter.emit("*s\");")
                 self.emitter.emit("}")
             elif self.curtok.text in self.ints:
-                self.emitter.emit("if(0 == scanf(\"%" + "d\", &" + self.curtok.text + ")) {")
+                self.emitter.emit("if(0 == scanf(\"%" + "ld\", &" + self.curtok.text + ")) {")
                 self.emitter.emit(self.curtok.text + " = 0;")
                 self.emitter.emitn("scanf(\"%")
                 self.emitter.emit("*s\");")

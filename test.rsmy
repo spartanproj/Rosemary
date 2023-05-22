@@ -1,7 +1,2 @@
-func x(float y) -> float {
-    floats result
-    result=y/10
-    ret result
-}
-float o=9
-print x(o)
+int y=0
+print y
