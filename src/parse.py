@@ -35,6 +35,7 @@ class Parser:
         self.floats=set()
         self.ints=set()
         self.strings=set()
+        self.bools=set()
         self.labels=set()
         self.gotos=set()
         self.funcs=[]
@@ -59,16 +60,18 @@ class Parser:
             matches= {
                 "int":Type.NUMBER,
                 "float":Type.NUMBER,
-                "string":Type.STRING
+                "string":Type.STRING,
+                "bool":Type.NUMBER
             }
             currentargtype=argtypes[1][j]
             match matches[currentargtype]:
                 case Type.NUMBER:
-                    if self.curtok.kind!=Type.NUMBER and self.curtok.text not in self.ints|self.floats:
+                    if self.curtok.kind!=Type.NUMBER and self.curtok.text not in self.ints|self.floats|self.bools:
                         self.panic("Wrong arg type")
                 case Type.STRING:
                     if self.curtok.kind!=Type.STRING and self.curtok.text not in self.strings:
                         self.panic("Wrong arg type")
+                
             filler="" if self.curtok.kind!=Type.STRING else "\""
             self.emitter.emitn(filler+self.curtok.text+filler)
             self.next()
@@ -115,6 +118,7 @@ class Parser:
         self.line+=1
         self.emitter.headeremit("#include <stdio.h>")
         self.emitter.headeremit("#include <stdint.h>")
+        self.emitter.headeremit("#include <stdbool.h>")
         self.emitter.headeremit("#include <stdlib.h>")
         self.emitter.headeremit("#include <string.h>")
         self.emitter.headeremit("int main(void) {")
@@ -158,15 +162,15 @@ class Parser:
             for x in funcs:
                 for key,val in x.items():
                     if key in purelist:
-                        
                         match val:
-                            
                             case "int":
                                 self.emitter.emitn(f"printf(\"%" + "d\",")
                             case "float":
                                 self.emitter.emitn(f"printf(\"%" + ".2f\",")
                             case "string":
                                 self.emitter.emitn(f"printf(\"%" + "s\",")
+                            case "bool":
+                                self.emitter.emitn(f"printf(\"%d\",")
                     self.functioncall()
                     self.emitter.antiemit(1)
                     self.emitter.emit(");")
@@ -180,10 +184,12 @@ class Parser:
                 self.expression()
                 self.emitter.emit("));")
                 failed=False
-            elif self.curtok.text in self.ints:
-                self.emitter.emitn("printf(\"%" + "ld\",")
+            elif self.curtok.text in self.ints|self.bools:
+                percentafter="ld" if self.curtok.text in self.ints else "d"
+                self.emitter.emitn("printf(\"%" + f"{percentafter}\",")
                 self.expression()
                 self.emitter.emit(");")
+                failed=False
                 failed=False
             elif self.curtok.text in self.strings:
                 self.emitter.emitn("printf(")
@@ -306,11 +312,27 @@ class Parser:
                     self.panic("Attempting to assign non-integer value to int variable")
             self.expression()
             self.emitter.emit(";")
+        elif self.checkcur(Type.bool):
+            log(self.fname,self.line,"bool")
+            self.next()
+            if self.curtok.text not in self.bools:
+                self.bools.add(self.curtok.text)
+                self.emitter.headeremit("bool " + self.curtok.text + ";")
+            self.emitter.emitn(self.curtok.text+"=")
+            self.match(Type.IDENT)
+            self.match(Type.EQ)
+            try:
+                bool(self.curtok.text)
+            except:
+                if self.curtok.text not in self.bools:
+                    self.panic("Attempting to assign non-boolean value to boolean variable")
+            self.expression()
+            self.emitter.emit(";")
         elif self.checkcur(Type.ints):
             log(self.fname,self.line,"ints")
             self.next()
             while self.checkcur(Type.IDENT):
-                if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+                if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings or self.curtok.text in self.bools:
                     self.panic("Attempting to redeclare variable - "+self.curtok.text)
                 self.emitter.emitn("int64_t ")
                 self.emitter.emitn(self.curtok.text)
@@ -320,11 +342,25 @@ class Parser:
                 if not self.checkcur(Type.COMMA):
                     break
                 self.next()
+        elif self.checkcur(Type.bools):
+            log(self.fname,self.line,"bools")
+            self.next()
+            while self.checkcur(Type.IDENT):
+                if self.curtok.text in self.floats|self.ints|self.strings|self.bools:
+                    self.panic("Attempting to redeclare variable - "+self.curtok.text)
+                self.emitter.emitn("bool ")
+                self.emitter.emitn(self.curtok.text)
+                self.emitter.emit("=false;")
+                self.bools.add(self.curtok.text)
+                self.next()
+                if not self.checkcur(Type.COMMA):
+                    break
+                self.next()
         elif self.checkcur(Type.floats):
             log(self.fname,self.line,"floats")
             self.next()
             while self.checkcur(Type.IDENT):
-                if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+                if self.curtok.text in self.floats|self.ints|self.strings|self.bools:
                     self.panic("Attempting to redeclare variable - "+self.curtok.text)
                 self.emitter.emitn("float ")
                 self.emitter.emitn(self.curtok.text)
@@ -355,7 +391,7 @@ class Parser:
             log(self.fname,self.line,"strings")
             self.next()
             while self.checkcur(Type.IDENT):
-                if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+                if self.curtok.text in self.floats|self.ints|self.strings|self.bools:
                     self.panic("Attempting to redeclare variable - "+self.curtok.text)
                 self.emitter.emitn("char * ")
                 self.emitter.emitn(self.curtok.text)
@@ -420,7 +456,7 @@ class Parser:
                 else:
                     self.panic("Attempting to decrement non-numeric value - "+self.curtok.text)
             
-            elif self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
+            elif self.curtok.text in self.floats|self.ints|self.strings|self.bools:
                 log(self.fname,self.line,"reassign")
                 self.emitter.emitn(self.curtok.text+"=")
                 self.next()
@@ -434,7 +470,7 @@ class Parser:
         elif self.checkcur(Type.input):
             log(self.fname,self.line,"input")
             self.next()
-            if self.curtok.text not in self.floats and self.curtok.text not in self.ints and self.curtok.text not in self.strings:
+            if self.curtok.text not in self.floats|self.ints|self.strings|self.bools:
                 self.panic("Attempting to input into uninitialised variable "+self.curtok.text)
             if self.curtok.text in self.floats:
                 self.emitter.emit("if(0 == scanf(\"%" + "f\", &" + self.curtok.text + ")) {")
@@ -442,8 +478,9 @@ class Parser:
                 self.emitter.emitn("scanf(\"%")
                 self.emitter.emit("*s\");")
                 self.emitter.emit("}")
-            elif self.curtok.text in self.ints:
-                self.emitter.emit("if(0 == scanf(\"%" + "ld\", &" + self.curtok.text + ")) {")
+            elif self.curtok.text in self.ints|self.bools:
+                percentafter="ld" if self.curtok.text in self.ints else "d"
+                self.emitter.emit("if(0 == scanf(\"%" + f"{percentafter}\", &" + self.curtok.text + ")) {")
                 self.emitter.emit(self.curtok.text + " = 0;")
                 self.emitter.emitn("scanf(\"%")
                 self.emitter.emit("*s\");")
@@ -472,15 +509,16 @@ class Parser:
             matchto= {
                     "int":self.ints,
                     "float":self.floats,
-                    "string":self.strings
+                    "string":self.strings,
+                    "bool":self.bools
                 }
             argstofunc=[]
             
             
-            while self.curtok.kind in [Type.float,Type.int,Type.string]:
+            while self.curtok.kind in [Type.float,Type.int,Type.string,Type.bool]:
                 args+=1
                 temp+=(self.curtok.text if self.curtok.kind!=Type.string else "char *"+" ")
-                if not self.curtok.kind in [Type.float,Type.int,Type.string]:
+                if not self.curtok.kind in [Type.float,Type.int,Type.string,Type.bool]:
                     self.panic(f"Unknown type {self.curtok.text}")
                 else:
                     typen=self.curtok.text
@@ -501,7 +539,7 @@ class Parser:
             
             self.match(Type.RNBRACK)
             self.match(Type.ARROW)
-            if self.curtok.kind not in [Type.int, Type.float, Type.string]:
+            if self.curtok.kind not in [Type.int, Type.float, Type.string,Type.bool]:
                 self.panic(f"Wrong return type {self.curtok.text}")
             else: 
                 type=self.curtok.kind
@@ -527,6 +565,9 @@ class Parser:
                     if self.curtok.kind not in [Type.NUMBER, Type.IDENT]:
                         self.panic(f"Wrong return type")
                 case Type.float:
+                    if self.curtok.kind not in [Type.NUMBER, Type.IDENT]:
+                        self.panic(f"Wrong return type")
+                case Type.bool:
                     if self.curtok.kind not in [Type.NUMBER, Type.IDENT]:
                         self.panic(f"Wrong return type")
                 case _:
@@ -598,8 +639,7 @@ class Parser:
             self.emitter.emitn("\""+self.curtok.text+"\"")
             self.next()
         elif self.checkcur(Type.IDENT):
-            if self.curtok.text in self.floats or self.curtok.text in self.ints or self.curtok.text in self.strings:
-                pass
+            if self.curtok.text in self.floats|self.ints|self.strings|self.bools:
                 self.emitter.emitn(self.curtok.text)
                 self.next()
             elif self.curtok.text in self.funcs:

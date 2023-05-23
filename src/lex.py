@@ -245,6 +245,11 @@ class Type(enum.Enum):
         extern=120
         func=121
         ret=122
+        bool=123
+        bools=124
+        true=125
+        false=126
+        std=127
         EQ = 201  
         PLUS = 202
         MINUS = 203
