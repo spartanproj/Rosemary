@@ -10,15 +10,16 @@ if len(sys.argv) < 3:
 with open(sys.argv[1], 'r') as inputFile:
     source = inputFile.read()
 # Initialize the lexer and parser.
-sourcelines=source.split("\n")
+
 start=log(myname,0,"Rosemary Compiler",HIGH)
 if "-std" in sys.argv:
     path=""
-    for j in range(0,len(dup)-2):
+    for j in range(0,len(dup)-1):
         path+=dup[j]+"/"
     with open(path+"std.rh", 'r') as stdlib:
         stdsource = stdlib.read()
     source=stdsource+"\n"+source
+sourcelines=source.split("\n")
 lexer = Lexer(source)
 emitter=Emitter(sys.argv[2])
 parser = Parser(lexer,emitter,sourcelines,sys.argv[1])

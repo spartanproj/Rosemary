@@ -247,9 +247,7 @@ class Type(enum.Enum):
         ret=122
         bool=123
         bools=124
-        true=125
-        false=126
-        std=127
+        std=125
         EQ = 201  
         PLUS = 202
         MINUS = 203

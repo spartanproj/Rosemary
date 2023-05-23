@@ -1,1 +1,1 @@
-print x
+print flip(0)
