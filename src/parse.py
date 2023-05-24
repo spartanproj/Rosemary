@@ -149,32 +149,7 @@ class Parser:
         if self.checkcur(Type.print):
             log(self.fname,self.line,"print")
             self.next()
-            funcs=[]
-            purelist=[]
-            for value in self.funcs:
-                for key,val in value.items():
-                    if isinstance(val,list) or key=="ret":
-                        pass
-                    else:
-                        funcs.append({key:(value["ret"])})
-                        purelist.append(key)
-            failed=True
-            for x in funcs:
-                for key,val in x.items():
-                    if key in purelist:
-                        match val:
-                            case "int":
-                                self.emitter.emitn(f"printf(\"%" + "d\",")
-                            case "float":
-                                self.emitter.emitn(f"printf(\"%" + ".2f\",")
-                            case "string":
-                                self.emitter.emitn(f"printf(\"%" + "s\",")
-                            case "bool":
-                                self.emitter.emitn(f"printf(\"%d\",")
-                    self.functioncall()
-                    self.emitter.antiemit(1)
-                    self.emitter.emit(");")
-                    failed=False
+            
             if self.checkcur(Type.STRING):
                 self.emitter.emit("printf(\""+self.curtok.text+"\");")
                 self.next()
@@ -201,6 +176,32 @@ class Parser:
                 self.emitter.emit("printf(\"%ld\",\""+self.curtok.text+"\"\");")
                 self.next()
             else:
+                funcs=[]
+                purelist=[]
+                for value in self.funcs:
+                    for key,val in value.items():
+                        if isinstance(val,list) or key=="ret":
+                            pass
+                        else:
+                            funcs.append({key:(value["ret"])})
+                            purelist.append(key)
+                failed=True
+                for main in funcs:
+                    for key,val in main.items():                
+                        if key in purelist:
+                            match val:
+                                case "int":
+                                    self.emitter.emitn(f"printf(\"%" + "d\",")
+                                case "float":
+                                    self.emitter.emitn(f"printf(\"%" + ".2f\",")
+                                case "string":
+                                    self.emitter.emitn(f"printf(\"%" + "s\",")
+                                case "bool":
+                                    self.emitter.emitn(f"printf(\"%d\",")
+                            self.functioncall()
+                            self.emitter.antiemit(1)
+                            self.emitter.emit(");")
+                            failed=False
                 if failed==True:
                     self.panic("Argument to print is erroneous - "+self.curtok.text)
         elif self.checkcur(Type.IF):

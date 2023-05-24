@@ -305,6 +305,8 @@ func (all type are valid return types)
 
 ret
 ```
+#### Libraries
+- std
 ### Operators
 #### Comparison
 ```
