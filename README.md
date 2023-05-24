@@ -265,6 +265,7 @@ def x(xz: int,yz: int):
 - Will write to docs/index.html
 - Also uses python `markdown` extension
 ### List of reserved keywords
+- Do not use any keywords in code in variables, functions etc.
 #### Types
 ```
 int
@@ -306,9 +307,42 @@ func (all type are valid return types)
 ret
 ```
 #### Libraries
-- std
+```
+std
+```
 ### Operators
+#### Basic
+```
+=
++
+-
+*
+/
+```
 #### Comparison
 ```
-
+==
+!=
+<
+>
+<=
+>=
+```
+#### Other::Functions
+```
+(
+)
+{
+}
+->
+,
+```
+#### Other::Maths
+```
++=
+-=
+*=
+/=
+++
+--
 ```

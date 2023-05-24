@@ -232,7 +232,6 @@ class Type(enum.Enum):
         float = 105
         IF = 106
         WHILE = 109
-        end=110
         loop=111
         int=112
         string=113 # *string* x = "hello!"
