@@ -264,3 +264,49 @@ def x(xz: int,yz: int):
 - No cmd line arguments needed
 - Will write to docs/index.html
 - Also uses python `markdown` extension
+### List of reserved keywords
+#### Types
+```
+int
+ints
+
+string
+strings
+
+float
+floats
+
+bool
+bools
+```
+#### Control flow
+```
+if
+elif
+else
+
+label
+goto
+
+loop
+while
+```
+#### Builtins
+```
+inc
+extern
+
+print
+input
+```
+#### Functions
+```
+func (all type are valid return types)
+
+ret
+```
+### Operators
+#### Comparison
+```
+
+```
