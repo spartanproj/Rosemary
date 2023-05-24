@@ -25,9 +25,12 @@ with open('index.html', 'w') as f:
         border-radius:7px
     }
     code:not(pre *){
-        background:white;
+        background:white --important;
         border-radius:3px;
         color:black
+    }
+    .err {
+    background:#002b36 !important
     }
 </style>
 <body>
