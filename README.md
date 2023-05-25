@@ -220,18 +220,20 @@ if x=="hi":
 <td>
 
 ```py
-func x(int xz,int yz) {
+func x(int xz,int yz) -> int{
     int result=xz*yz
     print result
+    ret result
 }
 ```
 </td>
 <td>
 
 ```c
-void x(int xz, int yz) {
+int x(int xz, int yz) {
     int result=xz*yz;
     printf("%d",result);
+    return result;
 }
 ```
 
@@ -239,9 +241,10 @@ void x(int xz, int yz) {
 <td>
 
 ```py
-def x(xz: int,yz: int):
+def x(xz: int,yz: int) -> int:
     result=xz*yz
     print(result)
+    return result
 ```
 
 </td>
