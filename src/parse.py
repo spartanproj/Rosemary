@@ -39,6 +39,9 @@ class Parser:
         self.labels=set()
         self.gotos=set()
         self.funcs=[]
+        self.currentfunctionreturn=""
+        self.infunc=False
+
 
         self.curtok = None
         self.peektok = None
@@ -544,6 +547,7 @@ class Parser:
                 self.panic(f"Wrong return type {self.curtok.text}")
             else: 
                 type=self.curtok.kind
+                self.currentfunctionreturn=type
                 typetext=self.curtok.text
                 self.emitter.emitn(self.curtok.text)
                 self.emitter.emitn(temp)
@@ -552,13 +556,21 @@ class Parser:
             self.match(Type.LBRACK)
             self.emitter.emit("){")
             self.nl()
-            while not self.checkcur(Type.ret):
+            self.infunc=True
+            while not self.checkcur(Type.RBRACK):
                 self.statement()
                 self.emitter.emit("")
-            self.match(Type.ret)
+            self.infunc=False
+            for k in argstofunc:
+                for varname,typen in k.items():
+                    matchto[typen].remove(varname)
+            self.match(Type.RBRACK)
+            self.emitter.emit("}")
+        elif self.checkcur(Type.ret) and self.infunc:
             log(self.fname,self.line,"return")
             self.emitter.emitn("return ")
-            match type:
+            self.match(Type.ret)
+            match self.currentfunctionreturn:
                 case Type.string:
                     if self.curtok.kind not in [Type.STRING, Type.IDENT]:
                         self.panic(f"Wrong return type")
@@ -575,12 +587,6 @@ class Parser:
                     self.panic("Not quite sure how we ended up here. Um maybe file a Github issue?")
             self.emitter.emit(self.curtok.text+";")
             self.next()
-            for k in argstofunc:
-                for varname,typen in k.items():
-                    matchto[typen].remove(varname)
-            self.nl()
-            self.match(Type.RBRACK)
-            self.emitter.emit("}")
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()
