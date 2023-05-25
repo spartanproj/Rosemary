@@ -2,7 +2,7 @@ func x(int y) -> int {
     if y==1 {
         ret y
     } else {
-        ret 1
+        ret 2
     }
 }
 print x(3)

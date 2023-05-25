@@ -49,11 +49,13 @@ class Parser:
         self.next()
         self.next()
     def functioncall(self):
-        log(self.fname,self.line,"function call")
+        log(self.fname,self.line,"function call",HIGH)
         self.emitter.emitn(self.curtok.text+"(")
         funcname=self.curtok.text
         self.next()
         self.next()
+        
+
         argtypes=self.funcvals(funcname)
         try:
             iterations=range(self.funcvals(funcname)[0])
@@ -78,11 +80,13 @@ class Parser:
             filler="" if self.curtok.kind!=Type.STRING else "\""
             self.emitter.emitn(filler+self.curtok.text+filler)
             self.next()
+  
             if j+1!=len(iterations):
                 self.match(Type.COMMA)
                 self.emitter.emitn(",")
         self.emitter.emit(");")
-        self.match(Type.RNBRACK)
+        # self.match(Type.RNBRACK)
+        # self.next()
     def checkcur(self,kind):
         return kind==self.curtok.kind
     def checkpeek(self,kind):
@@ -190,8 +194,9 @@ class Parser:
                             purelist.append(key)
                 failed=True
                 for main in funcs:
-                    for key,val in main.items():                
+                    for key,val in main.items():              
                         if key in purelist:
+                            print(key,purelist)
                             match val:
                                 case "int":
                                     self.emitter.emitn(f"printf(\"%" + "d\",")
@@ -204,6 +209,7 @@ class Parser:
                             self.functioncall()
                             self.emitter.antiemit(1)
                             self.emitter.emit(");")
+
                             failed=False
                 if failed==True:
                     self.panic("Argument to print is erroneous - "+self.curtok.text)
@@ -226,7 +232,7 @@ class Parser:
                 log(self.fname,self.line,"elif")
                 self.next()
                 self.emitter.emitn("else if(")
-                if self.checkpeek(Type.eqeq) and self.checkcur(Type.STRING):
+                if self.checkpeek(Type.EQEQ) and self.checkcur(Type.STRING):
                     self.strcmp()
                 else:
                     self.comparison()

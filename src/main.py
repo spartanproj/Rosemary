@@ -19,6 +19,7 @@ if "-std" in sys.argv:
     with open(path+"std.rh", 'r') as stdlib:
         stdsource = stdlib.read()
     source=stdsource+"\n"+source
+print(source)
 sourcelines=source.split("\n")
 lexer = Lexer(source)
 emitter=Emitter(sys.argv[2])
