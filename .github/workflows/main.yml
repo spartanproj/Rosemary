@@ -9,5 +9,5 @@ jobs:
       - run: |
          cd docs
          echo "Switched dir"
-         pip install markdown, pygments
+         pip install markdown pygments
          python md.py
