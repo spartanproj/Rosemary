@@ -10,3 +10,4 @@ func flip(bool bit) -> bool {
 func x(int y) -> int {
     ret y
 }
+x(3)
