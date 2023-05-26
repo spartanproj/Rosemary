@@ -565,6 +565,10 @@ class Parser:
             self.emitter.emit("){")
             self.nl()
             self.infunc=True
+            oldint=self.ints
+            oldfloats=self.floats
+            oldbool=self.bools
+            oldstring=self.strings
             while not self.checkcur(Type.RBRACK):
                 self.statement()
                 self.emitter.emit("")
@@ -572,6 +576,7 @@ class Parser:
             for k in argstofunc:
                 for varname,typen in k.items():
                     matchto[typen].remove(varname)
+                    print(matchto[typen])
             self.match(Type.RBRACK)
             self.emitter.emit("}")
         elif self.checkcur(Type.ret) and self.infunc:

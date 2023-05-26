@@ -5,4 +5,4 @@ func x(int y) -> int {
         ret y
     }
 }
-print x(2)
+print flip(0)

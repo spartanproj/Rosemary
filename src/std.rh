@@ -7,3 +7,6 @@ func flip(bool bit) -> bool {
     } 
     ret result
 }
+func intflip(int bit) -> int {
+    ints result
+}
