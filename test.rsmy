@@ -1,13 +1,8 @@
-func flip(bool bit) -> bool {
-    bools result
-    if bit==0 {
-        result=1
-    } else {
-        result=0
-    } 
-    ret result
-}
 func x(int y) -> int {
-    ret y
+    if y==1 {
+        ret 3
+    } else {
+        ret y
+    }
 }
-x(3)
+print x(2)

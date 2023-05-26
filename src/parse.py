@@ -39,6 +39,9 @@ class Parser:
         self.labels=set()
         self.gotos=set()
         self.funcs=[]
+        self.currentfunctionreturn=""
+        self.infunc=False
+
 
         self.curtok = None
         self.peektok = None
@@ -151,15 +154,18 @@ class Parser:
             self.next()
             
             if self.checkcur(Type.STRING):
+                print("string")
                 self.emitter.emit("printf(\""+self.curtok.text+"\");")
                 self.next()
                 failed=False
             elif self.curtok.text in self.floats:
+                print("float")
                 self.emitter.emitn("printf(\"%" + "f\", (float)(")
                 self.expression()
                 self.emitter.emit("));")
                 failed=False
             elif self.curtok.text in self.ints|self.bools:
+                print("ints")
                 percentafter="ld" if self.curtok.text in self.ints else "d"
                 self.emitter.emitn("printf(\"%" + f"{percentafter}\",")
                 self.expression()
@@ -167,15 +173,18 @@ class Parser:
                 failed=False
                 failed=False
             elif self.curtok.text in self.strings:
+                print("strings")
                 self.emitter.emitn("printf(")
                 self.emitter.emitn(self.curtok.text)
                 self.emitter.emit(");")
                 self.next()
                 failed=False
             elif self.checkcur(Type.NUMBER):
+                print("num")
                 self.emitter.emit("printf(\"%ld\",\""+self.curtok.text+"\"\");")
                 self.next()
             else:
+                print("else")
                 funcs=[]
                 purelist=[]
                 for value in self.funcs:
@@ -188,8 +197,10 @@ class Parser:
                 failed=True
                 for main in funcs:
                     for key,val in main.items():                
-                        if key in purelist:
-                            match val:
+                        if self.curtok.text in purelist:
+                            try:main[self.curtok.text]
+                            except:continue
+                            match main[self.curtok.text]:
                                 case "int":
                                     self.emitter.emitn(f"printf(\"%" + "d\",")
                                 case "float":
@@ -223,7 +234,7 @@ class Parser:
                 log(self.fname,self.line,"elif")
                 self.next()
                 self.emitter.emitn("else if(")
-                if self.checkpeek(Type.eqeq) and self.checkcur(Type.STRING):
+                if self.checkpeek(Type.EQEQ) and self.checkcur(Type.STRING):
                     self.strcmp()
                 else:
                     self.comparison()
@@ -544,6 +555,7 @@ class Parser:
                 self.panic(f"Wrong return type {self.curtok.text}")
             else: 
                 type=self.curtok.kind
+                self.currentfunctionreturn=type
                 typetext=self.curtok.text
                 self.emitter.emitn(self.curtok.text)
                 self.emitter.emitn(temp)
@@ -552,13 +564,21 @@ class Parser:
             self.match(Type.LBRACK)
             self.emitter.emit("){")
             self.nl()
-            while not self.checkcur(Type.ret):
+            self.infunc=True
+            while not self.checkcur(Type.RBRACK):
                 self.statement()
                 self.emitter.emit("")
-            self.match(Type.ret)
+            self.infunc=False
+            for k in argstofunc:
+                for varname,typen in k.items():
+                    matchto[typen].remove(varname)
+            self.match(Type.RBRACK)
+            self.emitter.emit("}")
+        elif self.checkcur(Type.ret) and self.infunc:
             log(self.fname,self.line,"return")
             self.emitter.emitn("return ")
-            match type:
+            self.match(Type.ret)
+            match self.currentfunctionreturn:
                 case Type.string:
                     if self.curtok.kind not in [Type.STRING, Type.IDENT]:
                         self.panic(f"Wrong return type")
@@ -575,12 +595,6 @@ class Parser:
                     self.panic("Not quite sure how we ended up here. Um maybe file a Github issue?")
             self.emitter.emit(self.curtok.text+";")
             self.next()
-            for k in argstofunc:
-                for varname,typen in k.items():
-                    matchto[typen].remove(varname)
-            self.nl()
-            self.match(Type.RBRACK)
-            self.emitter.emit("}")
         else:
             self.panic("Invalid statement \""+self.curtok.text+"\"")
         self.nl()
