@@ -565,18 +565,38 @@ class Parser:
             self.emitter.emit("){")
             self.nl()
             self.infunc=True
-            oldint=self.ints
-            oldfloats=self.floats
-            oldbool=self.bools
-            oldstring=self.strings
+            oldint=set(self.ints)
+            oldfloats=set(self.floats)
+            oldbool=set(self.bools)
+            oldstring=set(self.strings)
             while not self.checkcur(Type.RBRACK):
                 self.statement()
                 self.emitter.emit("")
             self.infunc=False
+            
+            copyb=set(self.bools)
+            for i in copyb:
+                if i not in oldbool:
+                    self.bools.remove(i)
+            
+            copyc=set(self.floats)
+            for i in copyc:
+                if i not in oldfloats:
+                    self.floats.remove(i)
+
+            copyd=set(self.ints)
+            for i in copyd:
+                if i not in oldint:
+                    self.ints.remove(i)
+
+            copye=set(self.strings)
+            for i in copye:
+                if i not in oldstring:
+                    self.strings.remove(i)
+
             for k in argstofunc:
-                for varname,typen in k.items():
-                    matchto[typen].remove(varname)
-                    print(matchto[typen])
+                for varname,typex in k.items():
+                    matchto[typex].remove(varname)
             self.match(Type.RBRACK)
             self.emitter.emit("}")
         elif self.checkcur(Type.ret) and self.infunc:

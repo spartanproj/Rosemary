@@ -9,4 +9,5 @@ func flip(bool bit) -> bool {
 }
 func intflip(int bit) -> int {
     ints result
+    print result
 }

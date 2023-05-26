@@ -6,3 +6,4 @@ func x(int y) -> int {
     }
 }
 print flip(0)
+intflip(0)
