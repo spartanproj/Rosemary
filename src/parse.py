@@ -154,18 +154,15 @@ class Parser:
             self.next()
             
             if self.checkcur(Type.STRING):
-                print("string")
                 self.emitter.emit("printf(\""+self.curtok.text+"\");")
                 self.next()
                 failed=False
             elif self.curtok.text in self.floats:
-                print("float")
                 self.emitter.emitn("printf(\"%" + "f\", (float)(")
                 self.expression()
                 self.emitter.emit("));")
                 failed=False
             elif self.curtok.text in self.ints|self.bools:
-                print("ints")
                 percentafter="ld" if self.curtok.text in self.ints else "d"
                 self.emitter.emitn("printf(\"%" + f"{percentafter}\",")
                 self.expression()
@@ -173,14 +170,12 @@ class Parser:
                 failed=False
                 failed=False
             elif self.curtok.text in self.strings:
-                print("strings")
-                self.emitter.emitn("printf(")
+                self.emitter.emitn("printf(\"%s\",")
                 self.emitter.emitn(self.curtok.text)
                 self.emitter.emit(");")
                 self.next()
                 failed=False
             elif self.checkcur(Type.NUMBER):
-                print("num")
                 self.emitter.emit("printf(\"%ld\",\""+self.curtok.text+"\"\");")
                 self.next()
             else:

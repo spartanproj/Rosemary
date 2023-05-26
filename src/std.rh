@@ -9,5 +9,26 @@ func flip(bool bit) -> bool {
 }
 func intflip(int bit) -> int {
     ints result
-    print result
+    if bit==0 {
+        result=1
+    } else {
+        result=0
+    } 
+    ret result
+}
+func printn(string x) -> int {
+    print x
+    print "\n"
+    ret 0
+}
+func printnn(float x) -> int {
+    print x 
+    print "\n"
+    ret 0
+}
+func strlen(string t) -> int {
+    extern "long size = 0;while (*t) {size += 1;t +=1;}return size;"
+}
+func strint(string t) -> int {
+    extern "return atoi(t);"
 }
