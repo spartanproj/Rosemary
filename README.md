@@ -1,6 +1,7 @@
 # Rosemary
 ## A blend of Python and C. Transpiled to C
 - Check out [/examples](examples/) for more use cases!
+- Lead dev werdl is away for a week so no pushing for a while!
 ## Why use Rosemary?
 ### Ease of use
 - You can write short, efficient code
