@@ -1,0 +1,11 @@
+func x(bool hey) -> bool {
+     if hey==true {
+         print "Hey!"
+         ret 1
+     } else {
+         ret hey
+     }
+}
+x(1)
+x(9)
+x(0)

@@ -13,7 +13,6 @@
   > Download the [Visual Studio Code extension](https://github.com/uimaxbai/vscode-rosemary) which makes your code colourful and includes IntelliSense for you to code faster.
 
 - Easy for both Python, Ruby, C and Java programmers to approach
-
 ### Speed
 
 - It is very fast (Takes <50 ms to compile to C)
