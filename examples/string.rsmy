@@ -3,8 +3,8 @@ string x = "hello"
 strings f
 print "Input a string"
 input f
-if f$$"gh" { // $$ is for string evaluation. This way it is clear what is being checked.
+if "gh"==f {
     print "GitHub"
-} elif f$$"hg" {
+} elif "hg"==f {
     print "Alias for history grep?"
 }
