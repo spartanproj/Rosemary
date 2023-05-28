@@ -6,6 +6,7 @@
 ### Ease of use
 - You can write short, efficient code
 - Easy for both Python/Ruby or C/Java programmers to approach
+- Download [uimaxbai](http://GitHub.com/uimaxbai)'s VS Code extension [here](https://github.com/uimaxbai/vscode-rosemary)
 ### Speed
 - It runs very fast (Takes <50 ms to compile to C)
 - The program below, for example takes 13ms to compile.
