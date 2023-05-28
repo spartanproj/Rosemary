@@ -5,5 +5,3 @@ func x(int y) -> int {
         ret y
     }
 }
-
-print fileread("test.rsmy")

@@ -131,6 +131,7 @@ class Parser:
 FILE *fp;
 long lSize;
 char *buffer;  
+int res;
         """)
         self.emitter.headeremit("int main(void) {")
         self.emitter.headeremit("int iterable;")

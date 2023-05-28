@@ -1,0 +1,48 @@
+func fileread(string filename) -> string {
+    extern "
+fp = fopen (filename,'rb');
+if(!fp) perror(filename),exit(1);
+
+fseek(fp,0L,SEEK_END);
+lSize = ftell(fp);
+rewind(fp);
+
+buffer = calloc(1,lSize+1);
+if(!buffer) fclose(fp),fputs('FileError - Memory Allocation Failure',stderr),exit(1);
+
+if(1!=fread(buffer,lSize,1,fp))
+  fclose(fp),free(buffer),fputs('FileError - File Read Failure',stderr),exit(1);
+
+
+fclose(fp);
+return buffer;
+    "
+}
+func fileow(string filename,string text) -> int {
+    extern "
+fp = fopen (filename,'w');
+if(!fp) return 1;
+fputs(text,fp);
+fclose(fp);
+return 0;
+    "
+}
+func fileoa(string filename,string text) -> int {
+    extern "
+fp = fopen (filename,'a');
+if(!fp) return 1;
+fputs(text,fp);
+fclose(fp);
+return 0;
+    "
+}
+func filew(string filename,string text,string aww) -> int {
+    extern "
+if (!strcmp(aww,'a')) {
+    res=fileoa(filename,text);
+} else if (!strcmp(aww,'w')) {
+    res=fileow(filename,text);
+} else res=1;
+return res;
+    "
+}

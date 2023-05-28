@@ -19,6 +19,13 @@ if "-std" in sys.argv:
     with open(path+"std.rh", 'r') as stdlib:
         stdsource = stdlib.read()
     source=stdsource+"\n"+source
+if "-file" in sys.argv:
+    path=""
+    for j in range(0,len(dup)-1):
+        path+=dup[j]+"/"
+    with open(path+"file.rh", 'r') as filelib:
+        filesource = filelib.read()
+    source=filesource+"\n"+source
 sourcelines=source.split("\n")
 lexer = Lexer(source)
 emitter=Emitter(sys.argv[2])

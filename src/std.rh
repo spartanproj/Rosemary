@@ -43,23 +43,3 @@ func strint(string t) -> int {
     return atoi(t);
     "
 }
-func fileread(string filename) -> string {
-    extern "
-fp = fopen (filename,'rb');
-if(!fp) perror(filename),exit(1);
-
-fseek(fp,0L,SEEK_END);
-lSize = ftell(fp);
-rewind(fp);
-
-buffer = calloc(1,lSize+1);
-if(!buffer) fclose(fp),fputs('FileError - Memory Allocation Failure',stderr),exit(1);
-
-if(1!=fread(buffer,lSize,1,fp))
-  fclose(fp),free(buffer),fputs('FileError - File Read Failure',stderr),exit(1);
-
-
-fclose(fp);
-return buffer;
-    "
-}
