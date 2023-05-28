@@ -1,4 +1,5 @@
-//factorial of n
+# factorial of n
+
 ints n
 print "Factorial of n:"
 input n
