@@ -1,34 +1,65 @@
+bool true=1
+bool false=2
 func flip(bool bit) -> bool {
     bools result
     if bit==0 {
-        result=1
+        ret true
     } else {
-        result=0
+        ret false
     } 
-    ret result
+    ret false
 }
 func intflip(int bit) -> int {
     ints result
     if bit==0 {
-        result=1
+        ret true
     } else {
-        result=0
+        ret false
     } 
     ret result
 }
 func printn(string x) -> int {
     print x
     print "\n"
-    ret 0
+    ret false
 }
 func printnn(float x) -> int {
     print x 
     print "\n"
-    ret 0
+    ret false
 }
 func strlen(string t) -> int {
-    extern "long size = 0;while (*t) {size += 1;t +=1;}return size;"
+    extern "
+    long size = 0;
+    while (*t) 
+    {
+        size += 1;t +=1;
+    }
+    return size;
+    "
 }
 func strint(string t) -> int {
-    extern "return atoi(t);"
+    extern "
+    return atoi(t);
+    "
+}
+func fileread(string filename) -> string {
+    extern "
+fp = fopen (filename,'rb');
+if(!fp) perror(filename),exit(1);
+
+fseek(fp,0L,SEEK_END);
+lSize = ftell(fp);
+rewind(fp);
+
+buffer = calloc(1,lSize+1);
+if(!buffer) fclose(fp),fputs('FileError - Memory Allocation Failure',stderr),exit(1);
+
+if(1!=fread(buffer,lSize,1,fp))
+  fclose(fp),free(buffer),fputs('FileError - File Read Failure',stderr),exit(1);
+
+
+fclose(fp);
+return buffer;
+    "
 }

@@ -121,11 +121,20 @@ class Parser:
         self.line+=1
         self.emitter.headeremit("#include <stdio.h>")
         self.emitter.headeremit("#include <stdint.h>")
-        self.emitter.headeremit("#include <stdbool.h>")
         self.emitter.headeremit("#include <stdlib.h>")
         self.emitter.headeremit("#include <string.h>")
+        self.emitter.headeremit("""
+#ifndef _STDBOOL_H
+#define _STDBOOL_H 
+#define bool        _Bool   
+#endif
+FILE *fp;
+long lSize;
+char *buffer;  
+        """)
         self.emitter.headeremit("int main(void) {")
         self.emitter.headeremit("int iterable;")
+        
         while self.checkcur(Type.NEWLINE):
             self.line+=1
             self.next()
@@ -133,6 +142,7 @@ class Parser:
             self.statement()
         for string in self.strings:
             self.emitter.emit(f"free({string});")
+        self.emitter.emit("free(buffer);")
         self.emitter.emit("return 0;")
         self.emitter.emit("}")
         self.emitter.emit(f"""
@@ -552,7 +562,7 @@ class Parser:
                 type=self.curtok.kind
                 self.currentfunctionreturn=type
                 typetext=self.curtok.text
-                self.emitter.emitn(self.curtok.text)
+                self.emitter.emitn(self.curtok.text if self.curtok.text!="string" else "char *")
                 self.emitter.emitn(temp)
                 self.next()
             self.funcs.append({f"{name}":f"{args}","argtype":typeslist,"ret":typetext})

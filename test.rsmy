@@ -6,4 +6,4 @@ func x(int y) -> int {
     }
 }
 
-print strint("509")
+print fileread("test.rsmy")
