@@ -1,4 +1,4 @@
-//check if n is palindrome
+# check if n is palindrome
 ints n,reversed,remainder,original
 print "Enter your number:"
 input n

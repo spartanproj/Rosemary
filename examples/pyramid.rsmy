@@ -1,4 +1,4 @@
-//generate ASCII art pyramid
+# generate ASCII art pyramid
 ints i,j,rows
 print "How many rows?"
 input rows

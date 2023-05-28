@@ -1,5 +1,5 @@
-//FIB
-//Fibonacci sequence up to input
+# FIB
+# Fibonacci sequence up to input
 ints howmany,temp
 print "Enter number of digits:"
 input howmany

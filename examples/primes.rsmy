@@ -1,4 +1,4 @@
-//print primes from n to m
+# print primes from n to m
 ints low,high,i,flag,temp
 print "Enter two numbers"
 input low

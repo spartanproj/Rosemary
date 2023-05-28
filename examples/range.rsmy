@@ -1,5 +1,5 @@
-//Range
-// Get range of user input
+# Range
+# Get range of user input
 ints max,numi,temp
 print "How many numbers?"
 input numi

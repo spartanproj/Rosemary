@@ -1,5 +1,5 @@
-//Mean
-//Calculate average
+# Mean
+# Calculate average
 ints a,b,c
 while a<1 {
     print "Enter number of scores: "

@@ -1,4 +1,4 @@
-//check if n is prime
+# check if n is prime
 ints n,i,flag
 print "Enter your number:"
 input n

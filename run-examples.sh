@@ -1,5 +1,7 @@
+#!/bin/bash
+
 function rsmy {
-    python ~/coding/rsmy/src/main.py $1 $1.c;
+    python ~/coding/rsmy/src/main.py $1 $1.c
     gcc $1.c -o $1.o
     printf "\n\nFilename is $(pwd)/$1.o\n\n"
     printf "$1.o - source $1\n\n"
