@@ -1,0 +1,18 @@
+func powi(int x, int y) -> int {
+    extern "
+    int res=1;
+    for (int i=0;i<y;++i)
+        res*=x;
+    return res;
+    "
+}
+func power(int a,int b) -> int {
+
+}
+extern "
+#define power(a, b) _Generic((a), \
+                            int: powi, \
+                            float: powf, \
+                            double: pow \
+                           )(a, b)
+"

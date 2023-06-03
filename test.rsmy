@@ -5,3 +5,7 @@ func x(int y) -> int {
         ret y
     }
 }
+
+ints xy
+xy = power(3,4)
+print xy

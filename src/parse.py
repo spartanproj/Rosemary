@@ -124,6 +124,7 @@ class Parser:
         self.emitter.headeremit("#include <stdlib.h>")
         self.emitter.headeremit("#include <string.h>")
         self.emitter.headeremit("""
+#include <math.h>
 #ifndef _STDBOOL_H
 #define _STDBOOL_H 
 #define bool        _Bool   
@@ -512,6 +513,18 @@ int res;
             self.match(Type.IDENT)
         elif self.checkcur(Type.inc):
             pass
+        elif self.checkcur(Type.UPTHINGY):
+            self.next()
+            while self.checkcur!=Type.UPTHINGY:
+               match self.curtok.kind:
+                    case Type.NEWLINE:
+                        self.nl()
+                    case Type.UPTHINGY:
+                        self.next()
+                        break
+                    case _:
+                        self.next()
+
         elif self.checkcur(Type.func):
             log(self.fname,self.line,"func definition")
             temp=""
@@ -685,11 +698,27 @@ int res;
             self.emitter.emitn("\""+self.curtok.text+"\"")
             self.next()
         elif self.checkcur(Type.IDENT):
+            failed=True
+            funcs=[]
+            purelist=[]
+            for value in self.funcs:
+                for key,val in value.items():
+                    if isinstance(val,list) or key=="ret":
+                        pass
+                    else:
+                        funcs.append({key:(value["ret"])})
+                        purelist.append(key)
+            for main in funcs:
+                    for key,val in main.items():                
+                        if self.curtok.text in purelist:
+                            self.functioncall()
+                            failed=False
             if self.curtok.text in self.floats|self.ints|self.strings|self.bools:
                 self.emitter.emitn(self.curtok.text)
                 self.next()
-            elif self.curtok.text in self.funcs:
-                self.functioncall()
+                           
+            elif not failed:
+                pass
             else:
                 self.panic("Referencing variable before assignment: " + self.curtok.text)
             

@@ -16,7 +16,7 @@ if(1!=fread(buffer,lSize,1,fp))
 
 fclose(fp);
 return buffer;
-    "
+"
 }
 func fileow(string filename,string text) -> int {
     extern "

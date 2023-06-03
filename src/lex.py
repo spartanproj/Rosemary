@@ -91,6 +91,8 @@ class Lexer:
                     token=Token(last+self.cur, Type.LTEQ)
                 else:
                     token=Token(self.cur,Type.LT)
+            case "^":
+                token=Token(self.cur,Type.UPTHINGY)
             case "!":
                 if self.peek()=="=":
                     last=self.cur
@@ -273,3 +275,4 @@ class Type(enum.Enum):
         LNBRACK=224 #(
         RNBRACK=225 #)
         ARROW=226
+        UPTHINGY=227 #^

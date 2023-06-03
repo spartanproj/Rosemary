@@ -12,20 +12,18 @@ with open(sys.argv[1], 'r') as inputFile:
 # Initialize the lexer and parser.
 
 start=log(myname,0,"Rosemary Compiler",HIGH)
-if "-std" in sys.argv:
-    path=""
-    for j in range(0,len(dup)-1):
-        path+=dup[j]+"/"
-    with open(path+"std.rh", 'r') as stdlib:
-        stdsource = stdlib.read()
-    source=stdsource+"\n"+source
-if "-file" in sys.argv:
-    path=""
-    for j in range(0,len(dup)-1):
-        path+=dup[j]+"/"
-    with open(path+"file.rh", 'r') as filelib:
-        filesource = filelib.read()
-    source=filesource+"\n"+source
+def lib(libname):
+    global source
+    if f"-{libname}" in sys.argv:
+        path=""
+        for j in range(0,len(dup)-1):
+            path+=dup[j]+"/"
+        with open(path+f"{libname}.rh", 'r') as lib:
+            libsource = lib.read()
+        source=libsource+"\n"+source
+lib("std")
+lib("file")
+lib("math")
 sourcelines=source.split("\n")
 lexer = Lexer(source)
 emitter=Emitter(sys.argv[2])
