@@ -399,3 +399,40 @@ std
 ++
 --
 ```
+### Library functions
+#### Maths
+```
+func sin(float x) -> float
+func cos(float x) -> float
+func tan(float x) -> float
+func asin(float x) -> float
+func acos(float x) -> float
+func atan(float x) -> float
+func atan2(float y, float x) -> float
+func sinh(float x) -> float
+func cosh(float x) -> float
+func tanh(float x) -> float
+func exp(float x) -> float
+func log(float x) -> float
+func log10(float x) -> float
+func pow(float base, float exponent) -> float
+func sqrt(float x) -> float
+func ceil(float x) -> float
+func floor(float x) -> float
+func fabs(float x) -> float
+func fmod(float numerator, float denominator) -> float
+func exp2(float x) -> float
+func expm1(float x) -> float
+func log1p(float x) -> float
+func log2(float x) -> float
+func cbrt(float x) -> float
+func erf(float x) -> float
+func erfc(float x) -> float
+func hypot(float x, float y) -> float
+func lgamma(float x) -> float
+func tgamma(float x) -> float
+func nearbyint(float x) -> float
+func rint(float x) -> float
+func round(float x) -> float
+func trunc(float x) -> float
+```

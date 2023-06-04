@@ -6,6 +6,6 @@ func x(int y) -> int {
     }
 }
 
-ints xy
-xy = power(3,4)
+floats xy
+xy = log10(65.0)
 print xy

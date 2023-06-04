@@ -48,6 +48,8 @@ class Parser:
         self.line=0
         self.next()
         self.next()
+    def cexternal(self,name,types,ret):
+        self.funcs.append({name: len(types), 'argtype': types, 'ret': ret})
     def functioncall(self):
         log(self.fname,self.line,"function call")
         self.emitter.emitn(self.curtok.text+"(")
@@ -117,6 +119,39 @@ class Parser:
     def warning(self,msg):
         sys.exit("Warning - "+msg+ " at token "+self.curtok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
     def program(self):
+        self.cexternal("sin", ["float"], "float")
+        self.cexternal("cos", ["float"], "float")
+        self.cexternal("tan", ["float"], "float")
+        self.cexternal("asin", ["float"], "float")
+        self.cexternal("acos", ["float"], "float")
+        self.cexternal("atan", ["float"], "float")
+        self.cexternal("atan2", ["float", "float"], "float")
+        self.cexternal("sinh", ["float"], "float")
+        self.cexternal("cosh", ["float"], "float")
+        self.cexternal("tanh", ["float"], "float")
+        self.cexternal("exp", ["float"], "float")
+        self.cexternal("log", ["float"], "float")
+        self.cexternal("log10", ["float"], "float")
+        self.cexternal("pow", ["float", "float"], "float")
+        self.cexternal("sqrt", ["float"], "float")
+        self.cexternal("ceil", ["float"], "float")
+        self.cexternal("floor", ["float"], "float")
+        self.cexternal("fabs", ["float"], "float")
+        self.cexternal("fmod", ["float", "float"], "float")
+        self.cexternal("exp2", ["float"], "float")
+        self.cexternal("expm1", ["float"], "float")
+        self.cexternal("log1p", ["float"], "float")
+        self.cexternal("log2", ["float"], "float")
+        self.cexternal("cbrt", ["float"], "float")
+        self.cexternal("erf", ["float"], "float")
+        self.cexternal("erfc", ["float"], "float")
+        self.cexternal("hypot", ["float", "float"], "float")
+        self.cexternal("lgamma", ["float"], "float")
+        self.cexternal("tgamma", ["float"], "float")
+        self.cexternal("nearbyint", ["float"], "float")
+        self.cexternal("rint", ["float"], "float")
+        self.cexternal("round", ["float"], "float")
+        self.cexternal("trunc", ["float"], "float")
         log(self.fname,self.line,"PROGRAM")
         self.line+=1
         self.emitter.headeremit("#include <stdio.h>")
@@ -203,7 +238,7 @@ int res;
                             purelist.append(key)
                 failed=True
                 for main in funcs:
-                    for key,val in main.items():                
+                    for key,val in main.items():            
                         if self.curtok.text in purelist:
                             try:main[self.curtok.text]
                             except:continue
@@ -425,7 +460,7 @@ int res;
             
             self.next()
             self.matchn(Type.STRING)
-            log(self.fname,self.line,"C Injection Warning - "+"`"+self.curtok.text+"`",HIGH)
+            # log(self.fname,self.line,"C Injection Warning - "+"`"+self.curtok.text+"`",HIGH)
             self.emitter.emit(self.curtok.text)
             self.next()
         elif self.checkcur(Type.IDENT):

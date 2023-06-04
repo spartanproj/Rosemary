@@ -14,5 +14,6 @@ extern "
                             int: powi, \
                             float: powf, \
                             double: pow \
-                           )(a, b)
+                           )(a, b) // function overloading for power
+
 "
