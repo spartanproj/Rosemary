@@ -119,6 +119,9 @@ class Parser:
     def warning(self,msg):
         sys.exit("Warning - "+msg+ " at token "+self.curtok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
     def program(self):
+        """
+        Maths API
+        """
         self.cexternal("sin", ["float"], "float")
         self.cexternal("cos", ["float"], "float")
         self.cexternal("tan", ["float"], "float")

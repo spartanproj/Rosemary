@@ -401,6 +401,7 @@ std
 ```
 ### Library functions
 #### Maths
+- These are just calls to the math.h C API. An internal function handles the function definitions.
 ```
 func sin(float x) -> float
 func cos(float x) -> float
