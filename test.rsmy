@@ -8,3 +8,4 @@ func x(int y) -> int {
 strings hello
 strcpy(hello,"hell5")
 print hello
+//test
