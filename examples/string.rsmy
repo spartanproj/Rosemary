@@ -1,3 +1,6 @@
+
+// File purpose: demos string manipulation and externs
+
 string x = "hello"
 strings f
 print "Input a string -> "
@@ -6,6 +9,8 @@ if "gh"==f {
     print "GitHub\n"
 } elif "hg"==f {
     print "Alias for history grep?\n"
+} else {
+    print "D\'oh\n"
 }
 extern "printf('x->%s\n',x);"
 print "strcpy(x,f)\n"

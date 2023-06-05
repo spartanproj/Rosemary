@@ -28,6 +28,7 @@ lib("file")
 lib("math")
 sourcelines=source.split("\n")
 lexer = Lexer(source)
+print(source)
 emitter=Emitter(sys.argv[2])
 parser = Parser(lexer,emitter,sourcelines,sys.argv[1])
 parser.program() # Start the parser.

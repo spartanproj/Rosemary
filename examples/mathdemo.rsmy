@@ -1,0 +1,10 @@
+// Compile this with the -math flag to include the math library!
+ints num1,num2
+print "Input number 1 -> " 
+input num1
+print "\nInput number 2 -> "
+input num2
+float result
+result=pow(2,3)
+print "num1**num2 -> "
+extern "printf('%f',result);"

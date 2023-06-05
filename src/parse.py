@@ -110,6 +110,8 @@ class Parser:
     def checkpeek(self,kind):
         return kind == self.peektok.kind
     def match(self,kind):
+        print(kind.name,self.curtok.kind.name)
+        print(self.curtok.text)
         if not self.checkcur(kind):
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
         self.next()
@@ -130,11 +132,15 @@ class Parser:
         return -1
     def matchn(self,kind):
         if not self.checkcur(kind):
+            
+            
+            
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
     def next(self):
         self.curtok=self.peektok
         self.peektok=self.lexer.getToken()
     def panic(self,msg):
+        
         sys.exit("Error - "+msg+ " at token "+self.curtok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
     def warning(self,msg):
         sys.exit("Warning - "+msg+ " at token "+self.curtok.text+f" (line {self.line} - `{self.sourcelines[self.line-1].strip()}`)")
