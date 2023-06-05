@@ -48,6 +48,26 @@ class Parser:
         self.line=0
         self.next()
         self.next()
+    def os(self):
+        match sys.platform:
+            case "linux":
+                self.emitter.headeremit("#include <linux.h>")
+                self.cexternal("open", ["string", "int", "mode_t"], "int")
+                self.cexternal("close", ["int"], "int")
+                self.cexternal("read", ["int", "void*", "size_t"], "ssize_t")
+                self.cexternal("write", ["int", "const void*", "size_t"], "ssize_t")
+                self.cexternal("lseek", ["int", "off_t", "int"], "off_t")
+                self.cexternal("mkdir", ["string", "mode_t"], "int")
+                self.cexternal("rmdir", ["string"], "int")
+                self.cexternal("unlink", ["string"], "int")
+                self.cexternal("rename", ["string", "string"], "int")
+                self.cexternal("stat", ["string", "struct stat*"], "int")
+                self.cexternal("chmod", ["string", "mode_t"], "int")
+                self.cexternal("chown", ["string", "uid_t", "gid_t"], "int")
+                self.cexternal("utime", ["string", "struct utimbuf*"], "int")
+                self.cexternal("link", ["string", "string"], "int")
+                self.cexternal("symlink", ["string", "string"], "int")
+                self.cexternal("readlink", ["string", "char*", "size_t"], "ssize_t")
     def cexternal(self,name,types,ret):
         self.funcs.append({name: len(types), 'argtype': types, 'ret': ret})
     def functioncall(self):
@@ -155,6 +175,18 @@ class Parser:
         self.cexternal("rint", ["float"], "float")
         self.cexternal("round", ["float"], "float")
         self.cexternal("trunc", ["float"], "float")
+        
+        self.cexternal("strcpy", ["string", "string"], "string")
+        self.cexternal("strncpy", ["string", "string", "int"], "string")
+        self.cexternal("strcat", ["string", "string"], "string")
+        self.cexternal("strncat", ["string", "string", "int"], "string")
+        self.cexternal("strcmp", ["string", "string"], "int")
+        self.cexternal("strncmp", ["string", "string", "int"], "int")
+        self.cexternal("strlen", ["string"], "int")
+        self.cexternal("strchr", ["string", "int"], "string")
+        self.cexternal("strrchr", ["string", "int"], "string")
+        self.cexternal("strstr", ["string", "string"], "string")
+        self.cexternal("strtok", ["string", "string"], "string")
         log(self.fname,self.line,"PROGRAM")
         self.line+=1
         self.emitter.headeremit("#include <stdio.h>")
@@ -543,11 +575,7 @@ int res;
                 self.emitter.emit("*s\");")
                 self.emitter.emit("}")
             elif self.curtok.text in self.strings:
-                self.emitter.emit("if(0 == scanf(\"%" + "s\", " + self.curtok.text + ")) {")
-                self.emitter.emit(self.curtok.text + " = 0;")
-                self.emitter.emitn("scanf(\"%")
-                self.emitter.emit("*s\");")
-                self.emitter.emit("}")
+                self.emitter.emit("scanf(\"%" + "s\", " + self.curtok.text + ");")
             self.match(Type.IDENT)
         elif self.checkcur(Type.inc):
             pass

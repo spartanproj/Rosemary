@@ -166,7 +166,7 @@ class Lexer:
                         self.panic("Illegal character in string literal "+self.cur)
                     self.next()
 
-                tokText=self.source[start:self.pos].replace("'","\"").replace("¬","\n")
+                tokText=self.source[start:self.pos].replace("'","\"").replace("¬","'")
                 token=Token(tokText,Type.STRING)
             case ",":
                 token=Token(self.cur,Type.COMMA)

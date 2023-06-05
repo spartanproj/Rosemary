@@ -5,7 +5,6 @@ func x(int y) -> int {
         ret y
     }
 }
-
-floats xy
-xy = log10(65.0)
-print xy
+strings hello
+strcpy(hello,"hell5")
+print hello

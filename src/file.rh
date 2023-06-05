@@ -36,11 +36,11 @@ fclose(fp);
 return 0;
     "
 }
-func filew(string filename,string text,string aww) -> int {
+func filew(string filename,string text,string mode) -> int {
     extern "
-if (!strcmp(aww,'a')) {
+if (!strcmp(mode,'a')) {
     res=fileoa(filename,text);
-} else if (!strcmp(aww,'w')) {
+} else if (!strcmp(mode,'w')) {
     res=fileow(filename,text);
 } else res=1;
 return res;

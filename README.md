@@ -437,3 +437,35 @@ func rint(float x) -> float
 func round(float x) -> float
 func trunc(float x) -> float
 ```
+#### File API
+```
+func fileread(string filename) -> string
+func fileow(string filename,string text) -> int
+func fileoa(string filename,string text) -> int
+func filew(string filename,string text,string mode) -> int
+```
+#### Standard Library
+```
+bool true=1
+bool false=0
+func flip(bool bit) -> bool
+func intflip(int bit) -> int
+func printn(string x) -> int
+func printnn(float x) -> int
+func strlen(string t) -> int
+func strint(string t) -> int
+```
+#### String (included by default)
+```
+func strcpy(string dest, string src) -> string
+func strncpy(string dest, string src, int n) -> string
+func strcat(string dest, string src) -> string
+func strncat(string dest, string src, int n) -> string
+func strcmp(string str1, string str2) -> int
+func strncmp(string str1, string str2, int n) -> int
+func strlen(string str) -> int
+func strchr(string str, int c) -> string
+func strrchr(string str, int c) -> string
+func strstr(string haystack, string needle) -> string
+func strtok(string str, string delim) -> string
+```

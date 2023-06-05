@@ -1,5 +1,5 @@
 bool true=1
-bool false=2
+bool false=0
 func flip(bool bit) -> bool {
     bools result
     if bit==0 {
