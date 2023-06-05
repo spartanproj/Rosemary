@@ -464,8 +464,8 @@ int res;
             self.next()
             if self.curtok.text not in self.strings:
                 self.strings.add(self.curtok.text)
-                self.emitter.headeremit("char * " + self.curtok.text + "=malloc(8192);")
-            self.emitter.emitn(self.curtok.text+"=\"")
+                self.emitter.emit( "char *"+self.curtok.text + "=malloc(8192);")
+            self.emitter.emitn(f"strcpy({self.curtok.text},")
             self.match(Type.IDENT)
             self.match(Type.EQ)
             try:
@@ -473,9 +473,8 @@ int res;
             except:
                 self.panic("Attempting to assign non-string value to string variable")
             self.matchn(Type.STRING)
-            self.emitter.emitn(self.curtok.text)
+            self.emitter.emit(f"\"{self.curtok.text}\");")
             self.next()
-            self.emitter.emit("\";")
         elif self.checkcur(Type.strings):
             log(self.fname,self.line,"strings")
             self.next()
