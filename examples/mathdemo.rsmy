@@ -1,10 +1,21 @@
+
 // Compile this with the -math flag to include the math library!
+
 ints num1,num2
 print "Input number 1 -> " 
 input num1
-print "\nInput number 2 -> "
+print "Input number 2 -> "
 input num2
-float result
-result=pow(2,3)
-print "num1**num2 -> "
-extern "printf('%f',result);"
+floats result
+result=pow(num1,num2)
+extern "printf('%f^%f=%.0f\n',num1,num2,result);" // take as int
+
+print "num1 -> "
+print num1
+print "\nabs(num1) -> "
+print abs(num1)
+
+
+print "num2 -> "
+print num2
+extern "printf('\nlog(num2) -> %f \nlog10(num2) -> %f',log(num2), log10(num2));"

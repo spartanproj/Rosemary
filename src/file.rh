@@ -38,5 +38,12 @@ return 0;
 }
  func filew(string filename,string text,string mode) -> int {
   extern "
-if (!strcmp(mode,'a')) {res=fileoa(filename,text);} else if (!strcmp(mode,'w')) {res=fileow(filename,text);} else res=1;return res;"
+if (!strcmp(mode,'a')) 
+{
+    res=fileoa(filename,text);
+} else if (!strcmp(mode,'w')) {
+    res=fileow(filename,text);
+} else 
+    res=1;
+return res;"
  }

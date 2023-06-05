@@ -10,7 +10,7 @@ if len(sys.argv) < 3:
 with open(sys.argv[1], 'r') as inputFile:
     source = inputFile.read()
 # Initialize the lexer and parser.
-if "-00" in sys.argv:
+if "-00" in sys.argv or True:
     def log(a,b,c,d=0):
         return datetime.datetime.timestamp(datetime.datetime.now())
 start=log(myname,0,"Rosemary Compiler",HIGH)
@@ -28,7 +28,6 @@ lib("file")
 lib("math")
 sourcelines=source.split("\n")
 lexer = Lexer(source)
-print(source)
 emitter=Emitter(sys.argv[2])
 parser = Parser(lexer,emitter,sourcelines,sys.argv[1])
 parser.program() # Start the parser.

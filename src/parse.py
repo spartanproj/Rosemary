@@ -110,8 +110,6 @@ class Parser:
     def checkpeek(self,kind):
         return kind == self.peektok.kind
     def match(self,kind):
-        print(kind.name,self.curtok.kind.name)
-        print(self.curtok.text)
         if not self.checkcur(kind):
             self.panic("Expected "+kind.name+" , got "+self.curtok.kind.name)
         self.next()
@@ -148,6 +146,7 @@ class Parser:
         """
         Maths API
         """
+        self.cexternal("abs", ["int"], "int")
         self.cexternal("sin", ["float"], "float")
         self.cexternal("cos", ["float"], "float")
         self.cexternal("tan", ["float"], "float")
@@ -496,7 +495,7 @@ int res;
                     break
                 self.next() 
         elif self.checkcur(Type.extern):
-            log(self.fname,self.line,"extern",MED)
+            log(self.fname,self.line,"extern",LOW)
             
             self.next()
             self.matchn(Type.STRING)
