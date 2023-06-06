@@ -150,7 +150,7 @@ for x in range(10):
 
 ```c
 int x=0
-extern "x=3;"
+extern "x=3;" // c in rsmy
 print x
 ```
 
@@ -159,7 +159,7 @@ print x
 
 ```c
 int x=0;
-x=3;
+x=3; // using c in c
 printf("%d",x);
 ```
 
@@ -167,9 +167,7 @@ printf("%d",x);
 <td>
 
 ```py
-x = 0
-x = 3
-print("%s" % x)
+# Not possible
 ```
 
 </td>
@@ -210,7 +208,7 @@ print(x);
 strings x
 input x
 if "hi"==x { # note yoda notation
-    print "Hello"
+    print "Hello","There" //HelloThere
 }
 ```
 

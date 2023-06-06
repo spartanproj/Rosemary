@@ -239,64 +239,70 @@ int res;
         if self.checkcur(Type.print):
             log(self.fname,self.line,"print")
             self.next()
-            
-            if self.checkcur(Type.STRING):
-                self.emitter.emit("printf(\""+self.curtok.text+"\");")
-                self.next()
-                failed=False
-            elif self.curtok.text in self.floats:
-                self.emitter.emitn("printf(\"%" + "f\", (float)(")
-                self.expression()
-                self.emitter.emit("));")
-                failed=False
-            elif self.curtok.text in self.ints|self.bools:
-                percentafter="ld" if self.curtok.text in self.ints else "d"
-                self.emitter.emitn("printf(\"%" + f"{percentafter}\",")
-                self.expression()
-                self.emitter.emit(");")
-                failed=False
-                failed=False
-            elif self.curtok.text in self.strings:
-                self.emitter.emitn("printf(\"%s\",")
-                self.emitter.emitn(self.curtok.text)
-                self.emitter.emit(");")
-                self.next()
-                failed=False
-            elif self.checkcur(Type.NUMBER):
-                self.emitter.emit("printf(\"%ld\",\""+self.curtok.text+"\"\");")
-                self.next()
-            else:
-                print("else")
-                funcs=[]
-                purelist=[]
-                for value in self.funcs:
-                    for key,val in value.items():
-                        if isinstance(val,list) or key=="ret":
-                            pass
-                        else:
-                            funcs.append({key:(value["ret"])})
-                            purelist.append(key)
-                failed=True
-                for main in funcs:
-                    for key,val in main.items():            
-                        if self.curtok.text in purelist:
-                            try:main[self.curtok.text]
-                            except:continue
-                            match main[self.curtok.text]:
-                                case "int":
-                                    self.emitter.emitn(f"printf(\"%" + "d\",")
-                                case "float":
-                                    self.emitter.emitn(f"printf(\"%" + ".2f\",")
-                                case "string":
-                                    self.emitter.emitn(f"printf(\"%" + "s\",")
-                                case "bool":
-                                    self.emitter.emitn(f"printf(\"%d\",")
-                            self.functioncall()
-                            self.emitter.antiemit(1)
-                            self.emitter.emit(");")
-                            failed=False
-                if failed==True:
+            iter=0
+            while True:
+                if self.checkcur(Type.STRING):
+                    self.emitter.emit("printf(\""+self.curtok.text+"\");")
+                    self.next()
+                    failed=False
+                elif self.curtok.text in self.floats:
+                    self.emitter.emitn("printf(\"%" + "f\", (float)(")
+                    self.expression()
+                    self.emitter.emit("));")
+                    failed=False
+                elif self.curtok.text in self.ints|self.bools:
+                    percentafter="ld" if self.curtok.text in self.ints else "d"
+                    self.emitter.emitn("printf(\"%" + f"{percentafter}\",")
+                    self.expression()
+                    self.emitter.emit(");")
+                    failed=False
+                    failed=False
+                elif self.curtok.text in self.strings:
+                    self.emitter.emitn("printf(\"%s\",")
+                    self.emitter.emitn(self.curtok.text)
+                    self.emitter.emit(");")
+                    self.next()
+                    failed=False
+                elif self.checkcur(Type.NUMBER):
+                    self.emitter.emit("printf(\"%ld\",\""+self.curtok.text+"\"\");")
+                    self.next()
+                    failed=False
+                else:
+                    print("else")
+                    funcs=[]
+                    purelist=[]
+                    for value in self.funcs:
+                        for key,val in value.items():
+                            if isinstance(val,list) or key=="ret":
+                                pass
+                            else:
+                                funcs.append({key:(value["ret"])})
+                                purelist.append(key)
+                    failed=True
+                    for main in funcs:
+                        for key,val in main.items():            
+                            if self.curtok.text in purelist:
+                                try:main[self.curtok.text]
+                                except:continue
+                                match main[self.curtok.text]:
+                                    case "int":
+                                        self.emitter.emitn(f"printf(\"%" + "d\",")
+                                    case "float":
+                                        self.emitter.emitn(f"printf(\"%" + ".2f\",")
+                                    case "string":
+                                        self.emitter.emitn(f"printf(\"%" + "s\",")
+                                    case "bool":
+                                        self.emitter.emitn(f"printf(\"%d\",")
+                                self.functioncall()
+                                self.emitter.antiemit(1)
+                                self.emitter.emit(");")
+                                failed=False
+
+                if failed==True and not iter:
                     self.panic("Argument to print is erroneous - "+self.curtok.text)
+                elif failed==True:break
+                elif self.curtok.kind!=Type.NEWLINE:self.match(Type.COMMA)
+                iter+=1
         elif self.checkcur(Type.IF):
             log(self.fname,self.line,"IF")
             self.next()

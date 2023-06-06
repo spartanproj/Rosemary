@@ -1,0 +1,12 @@
+fileow("test.test","hello!")
+strings toappend
+strings x
+extern "strcpy(x,fileread('test.test'));"
+print "Old contents: "
+print x
+print "\nWhat to append? -> "
+input toappend
+fileoa("test.test",toappend)
+extern "strcpy(x,fileread('test.test'));"
+print "New contents: "
+print x
